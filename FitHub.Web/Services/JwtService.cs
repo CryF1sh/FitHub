@@ -15,7 +15,7 @@ namespace FitHub.Web.Services
         public JwtService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _secretKey = _configuration.GetSection("AppSettings:JwtSecretKey").Value;
+            _secretKey = _configuration.GetSection("AppSettings:SecretKey").Value;
             _tokenDurationInHours = int.Parse(_configuration.GetSection("AppSettings:JwtTokenDurationInHours").Value);
         }
 
@@ -26,11 +26,7 @@ namespace FitHub.Web.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim(ClaimTypes.Name, user.Email),
-                // Добавьте другие необходимые утверждения
-            }),
+                Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, user.Email)}),
                 Expires = DateTime.UtcNow.AddHours(_tokenDurationInHours), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

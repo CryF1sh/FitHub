@@ -34,6 +34,7 @@ namespace FitHub.Web.Controllers
 
                 var user = new ApplicationUser
                 {
+                    UserName = model.Email,
                     Email = model.Email,
                     Firstname = model.Firstname,
                     Lastname = model.Lastname,
@@ -46,14 +47,40 @@ namespace FitHub.Web.Controllers
 
                 if (result.Succeeded)
                 {
+                    //Для мобильного приложения
                     var token = _jwtService.GenerateToken(user);
-
-                    // Возвращаем токен в ответе
                     return Ok(new AuthResponse { Token = token });
                 }
                 else
                 {
                     return BadRequest(new { Errors = result.Errors });
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return BadRequest(new { Errors = new List<string> { "Неверный Email или пароль" } });
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    var token = _jwtService.GenerateToken(user);
+                    return Ok(new AuthResponse { Token = token });
+                }
+                else
+                {
+                    return BadRequest(new { Errors = new List<string> { "Неверный Email или пароль" } });
                 }
             }
 
