@@ -362,3 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /FitHub.Web/appsettings.json
+/.idea
+/.gradle
+/gradle/wrapper
+*.kts
+*.properties
+/gradlew
+*.bat
