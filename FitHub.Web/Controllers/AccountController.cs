@@ -39,7 +39,8 @@ namespace FitHub.Web.Controllers
                     Firstname = model.Firstname,
                     Lastname = model.Lastname,
                     Birthdate = model.Birthdate,
-                    Location = model.Location
+                    Location = model.Location,
+                    Registrationdate = DateTime.Now
                     //Usersports 
                 };
 
