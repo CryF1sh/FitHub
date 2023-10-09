@@ -6,13 +6,13 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fithub.api.ServiceGenerator.authService
-import com.example.fithub.api.AuthResponse
+import com.example.fithub.models.AuthResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
 import android.widget.Toast
-import com.example.fithub.api.LoginRequest
+import com.example.fithub.models.LoginRequest
 
 
 class LoginActivity : AppCompatActivity() {
@@ -46,10 +46,8 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val authResponse = response.body()
                     if (authResponse != null) {
-                        // Сохраните токен в SharedPreferences
                         sharedPreferencesManager.saveAuthToken(authResponse.token)
 
-                        // Перенаправьте пользователя на MainActivity
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
                         finish()

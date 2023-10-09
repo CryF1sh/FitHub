@@ -24,9 +24,15 @@ namespace FitHub.Web.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);
 
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Email), 
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+            };
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, user.Email)}),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(_tokenDurationInHours), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

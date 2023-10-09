@@ -1,5 +1,7 @@
 package com.example.fithub.api
 
+import com.example.fithub.models.AuthResponse
+import com.example.fithub.models.LoginRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

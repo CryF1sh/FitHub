@@ -1,0 +1,45 @@
+<!-- item_post.xml -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="post"
+            type="com.example.fithub.models.Post" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Изображение поста -->
+        <ImageView
+            android:id="@+id/postImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@{post}" />
+
+        <!-- Заголовок поста -->
+        <TextView
+            android:id="@+id/postTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{post.title}"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:padding="8dp" />
+
+        <!-- Информация об авторе и дате -->
+        <TextView
+            android:id="@+id/postAuthorAndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{post.creatorFirstName} @{post.creatorLastName}, @{post.creationDate}"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:padding="8dp" />
+
+    </LinearLayout>
+</layout>
