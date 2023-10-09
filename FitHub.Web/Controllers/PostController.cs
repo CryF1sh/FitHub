@@ -1,6 +1,7 @@
 ﻿using FitHub.Data;
 using FitHub.Web.Data;
 using FitHub.Web.Modeles;
+using FitHub.Web.Modeles.PostsModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,13 +30,15 @@ namespace FitHub.Web.Controllers
         public async Task<IActionResult> GetPosts()
         {
             var posts = await _context.Posts
-                .Select(p => new
+                .Include(p => p.User)
+                .Select(p => new PostListItem 
                 {
-                    p.Postid,
-                    p.Title,
-                    p.Creationdate,
-                    p.User.Firstname,
-                    p.User.Lastname
+                    PostId = p.Postid,
+                    Title = p.Title,
+                    CreatorFirstName = p.User.Firstname,
+                    CreatorLastName = p.User.Lastname,
+                    CreationDate = p.Creationdate.ToString(),
+
                 })
                 .ToListAsync();
 

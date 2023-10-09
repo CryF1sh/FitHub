@@ -24,5 +24,5 @@ object ServiceGenerator {
 
     val authService: AuthService = retrofit.create(AuthService::class.java)
     val postService: PostService = retrofit.create(PostService::class.java)
-
+    val imageService: ImageService = retrofit.create(ImageService::class.java)
 }

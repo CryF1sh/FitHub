@@ -3,6 +3,7 @@ package com.example.fithub.api
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fithub.R
 import com.example.fithub.databinding.ItemPostBinding
 import com.example.fithub.models.Post
 
@@ -15,6 +16,7 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = posts[position]
+
         holder.bind(post)
     }
 
@@ -22,11 +24,20 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
         return posts.size
     }
 
-    inner class ViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
             binding.titleTextView.text = post.title
-            binding.creatorNameTextView.text = "${post.creatorFirstName} ${post.creatorLastName}"
+            val formattedDate = post.getFormattedCreationDate()
+            binding.creatorNameAndDateTextView.text = "${post.creatorFirstName} ${post.creatorLastName}, ${formattedDate}"
+            if (post.titleImageId != null) {
+                // Загрузите изображение по ID и установите его в ImageView
+                // Например, используя Picasso, Glide или другую библиотеку для загрузки изображений
+                // binding.postImageView.loadImage(post.titleImageId)
+            } else {
+                // Если изображения нет, установите изображение по умолчанию
+                binding.postTitleImage.setImageResource(R.drawable.default_post_image)
+            }
         }
     }
 }

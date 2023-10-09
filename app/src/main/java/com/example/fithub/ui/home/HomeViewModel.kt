@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.fithub.models.Post
 import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.models.PostCreate
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,12 +16,21 @@ class HomeViewModel : ViewModel() {
     val posts: LiveData<List<Post>> = _posts
 
     private val postService = ServiceGenerator.postService
+    private val imageService = ServiceGenerator.imageService
 
     fun loadPosts() {
         postService.getPosts().enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if (response.isSuccessful) {
-                    _posts.postValue(response.body())
+                    val posts = response.body() ?: emptyList()
+
+                    // Для каждого поста, который имеет titleImageId, загрузите изображение
+                    posts.forEach { post ->
+                        post.titleImageId?.let { imageId ->
+                            loadImageForPost(post, imageId)
+                        }
+                    }
+                    _posts.postValue(posts)
                 } else {
                     // Обработка ошибки при загрузке постов
                 }
@@ -28,6 +38,28 @@ class HomeViewModel : ViewModel() {
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 // Обработка ошибки при сетевом запросе
+            }
+        })
+    }
+
+    private fun loadImageForPost(post: Post, imageId: Int) {
+        imageService.getImageById(imageId).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    // Получите изображение и установите его в пост
+                    val imageBytes = response.body()?.bytes()
+                    if (imageBytes != null) {
+                        // Преобразуйте imageBytes в Bitmap и установите его в post
+                        // Например, можно использовать BitmapFactory.decodeByteArray()
+                        // и установить изображение в post.titleImage
+                    }
+                } else {
+                    // Обработка ошибки при загрузке изображения
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // Обработка ошибки при сетевом запросе изображения
             }
         })
     }
