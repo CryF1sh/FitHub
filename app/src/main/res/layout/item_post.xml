@@ -24,35 +24,36 @@
             app:cardCornerRadius="12dp"> <!-- Радиус закругления углов -->
 
             <ImageView
-                android:id="@+id/postTitleImage"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"/>
+                    android:id="@+id/postTitleImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"/>
         </androidx.cardview.widget.CardView>
 
 
         <!-- Заголовок поста -->
+
         <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{post.title}"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            android:padding="8dp" />
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{post.title}"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:padding="8dp" />
 
         <!-- Информация об авторе и дате -->
         <TextView
-            android:id="@+id/creatorNameAndDateTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="-8dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:padding="8dp" />
+                android:id="@+id/creatorNameAndDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="-8dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:padding="8dp" />
     </LinearLayout>
 </layout>

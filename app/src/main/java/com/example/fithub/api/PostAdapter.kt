@@ -2,6 +2,8 @@ package com.example.fithub.api
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
 import com.example.fithub.databinding.ItemPostBinding
@@ -15,9 +17,7 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val post = posts[position]
-
-        holder.bind(post)
+        holder.bind(posts[position])
     }
 
     override fun getItemCount(): Int {
@@ -26,18 +26,28 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
 
     inner class ViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
+        private val creatorNameAndDateTextView: TextView =
+            itemView.findViewById(R.id.creatorNameAndDateTextView)
+        private val postTitleImage: ImageView = itemView.findViewById(R.id.postTitleImage)
+
+
+
         fun bind(post: Post) {
             binding.titleTextView.text = post.title
             val formattedDate = post.getFormattedCreationDate()
             binding.creatorNameAndDateTextView.text = "${post.creatorFirstName} ${post.creatorLastName}, ${formattedDate}"
             if (post.titleImageId != null) {
-                // Загрузите изображение по ID и установите его в ImageView
-                // Например, используя Picasso, Glide или другую библиотеку для загрузки изображений
-                // binding.postImageView.loadImage(post.titleImageId)
+
             } else {
                 // Если изображения нет, установите изображение по умолчанию
                 binding.postTitleImage.setImageResource(R.drawable.default_post_image)
             }
         }
+    }
+
+    fun clear() {
+        posts = emptyList()
+        notifyDataSetChanged()
     }
 }

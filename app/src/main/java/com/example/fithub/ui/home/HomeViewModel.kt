@@ -14,30 +14,48 @@ import retrofit2.Response
 class HomeViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>> = _posts
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
     private val postService = ServiceGenerator.postService
     private val imageService = ServiceGenerator.imageService
 
+    private var currentPage = 1
+    var isLastPage = false
+    private var isLoadingData = false
+
     fun loadPosts() {
-        postService.getPosts().enqueue(object : Callback<List<Post>> {
+        if (isLoadingData || isLastPage) {
+            return
+        }
+
+        _isLoading.postValue(true)
+
+        postService.getPosts(currentPage).enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if (response.isSuccessful) {
                     val posts = response.body() ?: emptyList()
 
-                    // Для каждого поста, который имеет titleImageId, загрузите изображение
-                    posts.forEach { post ->
-                        post.titleImageId?.let { imageId ->
-                            loadImageForPost(post, imageId)
-                        }
+                    if (posts.isNotEmpty()) {
+                        currentPage++
+                        val currentPosts = _posts.value.orEmpty().toMutableList()
+                        currentPosts.addAll(posts)
+                        _posts.postValue(currentPosts)
+                    } else {
+                        isLastPage = true
                     }
-                    _posts.postValue(posts)
                 } else {
                     // Обработка ошибки при загрузке постов
                 }
+
+                _isLoading.postValue(false)
+                isLoadingData = false
             }
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 // Обработка ошибки при сетевом запросе
+                _isLoading.postValue(false)
+                isLoadingData = false
             }
         })
     }
