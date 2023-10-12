@@ -2,6 +2,7 @@ package com.example.fithub.api
 
 import com.example.fithub.models.Post
 import com.example.fithub.models.PostCreate
+import com.example.fithub.models.PostDetails
 import com.example.fithub.models.PostUpdate
 import retrofit2.Call
 import retrofit2.http.*
@@ -11,7 +12,7 @@ interface PostService {
     fun getPosts(@Query("page") page: Int): Call<List<Post>>
 
     @GET("api/posts/{id}")
-    fun getPostById(@Path("id") postId: Int): Call<Post>
+    fun getPostById(@Path("id") postId: Int): Call<PostDetails>
 
     @POST("api/posts")
     fun createPost(@Body post: PostCreate, @HeaderMap headers: Map<String, String>): Call<Post>

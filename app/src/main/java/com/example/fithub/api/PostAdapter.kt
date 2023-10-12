@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
 import com.example.fithub.databinding.ItemPostBinding
 import com.example.fithub.models.Post
+import com.example.fithub.ui.home.PostDetailFragmentDirections
 
 class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -31,8 +33,6 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
             itemView.findViewById(R.id.creatorNameAndDateTextView)
         private val postTitleImage: ImageView = itemView.findViewById(R.id.postTitleImage)
 
-
-
         fun bind(post: Post) {
             binding.titleTextView.text = post.title
             val formattedDate = post.getFormattedCreationDate()
@@ -40,9 +40,13 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
             if (post.titleImageId != null) {
 
             } else {
-                // Если изображения нет, установите изображение по умолчанию
                 binding.postTitleImage.setImageResource(R.drawable.default_post_image)
             }
+            binding.root.setOnClickListener {
+                val action = PostDetailFragmentDirections.actionPostsFragmentToPostDetailFragment(post.postId)
+                it.findNavController().navigate(action)
+            }
+
         }
     }
 

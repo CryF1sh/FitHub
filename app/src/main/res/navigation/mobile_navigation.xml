@@ -10,10 +10,28 @@
         android:name="com.example.fithub.ui.home.HomeFragment"
         android:label="Главная"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_createPostFragment"
-            app:destination="@id/createPostFragment" />
     </fragment>
+
+    <action
+        android:id="@+id/action_homeFragment_to_createPostFragment"
+        app:destination="@id/createPostFragment" />
+
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="com.example.fithub.ui.home.PostDetailFragment"
+        tools:layout="@layout/fragment_post_detail">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/actionPostsFragmentToPostDetailFragment"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
+
+    <action
+        android:id="@+id/actionPostsFragmentToPostDetailFragment"
+        app:destination="@id/postDetailFragment" />
+
 
     <fragment
         android:id="@+id/createPostFragment"

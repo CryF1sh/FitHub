@@ -49,7 +49,6 @@ class HomeFragment : Fragment() {
 
                 if (!homeViewModel.isLoading.value!! && !homeViewModel.isLastPage) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                        // Прокрутили до конца списка, загружаем следующую страницу
                         homeViewModel.loadPosts()
                     }
                 }

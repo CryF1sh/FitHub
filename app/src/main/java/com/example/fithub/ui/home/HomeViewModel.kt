@@ -1,15 +1,26 @@
 package com.example.fithub.ui.home
 
+import android.net.Uri
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.fithub.models.Post
 import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.models.PostCreate
+import com.example.fithub.models.PostDetails
+import com.example.fithub.models.UploadResponse
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class HomeViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
@@ -64,7 +75,6 @@ class HomeViewModel : ViewModel() {
         imageService.getImageById(imageId).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    // Получите изображение и установите его в пост
                     val imageBytes = response.body()?.bytes()
                     if (imageBytes != null) {
                         // Преобразуйте imageBytes в Bitmap и установите его в post
@@ -81,8 +91,8 @@ class HomeViewModel : ViewModel() {
             }
         })
     }
-    fun createPost(title: String, content: String, jwtToken: String?, callback: (Boolean) -> Unit) {
-        val newPost = PostCreate(title = title, content = content)
+    fun createPost(title: String, content: String, jwtToken: String?, titleImageId: Int?, callback: (Boolean) -> Unit) {
+        val newPost = PostCreate(title = title, content = content, titleImageId = titleImageId)
 
         val postService = ServiceGenerator.postService
 
@@ -108,4 +118,54 @@ class HomeViewModel : ViewModel() {
             }
         })
     }
+    fun uploadImage(imageUri: Uri, jwtToken: String?, callback: (UploadResponse?) -> Unit) {
+        val headers = HashMap<String, String>()
+        jwtToken?.let { token ->
+            headers["Authorization"] = "Bearer $token"
+        }
+
+        val imageFile = File(imageUri.path)
+
+        //if (!imageFile.exists()) {
+        //    callback(null)
+        //    return
+        //}
+
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+
+        imageService.uploadImage(body, headers).enqueue(object : Callback<UploadResponse> {
+            override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
+                if (response.isSuccessful) {
+                    val uploadResponse = response.body()
+                    callback(uploadResponse)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                callback(null)
+            }
+        })
+
+    }
+
+    fun getPostDetails(postId: Int, callback: (PostDetails?) -> Unit) {
+        postService.getPostById(postId).enqueue(object : Callback<PostDetails> {
+            override fun onResponse(call: Call<PostDetails>, response: Response<PostDetails>) {
+                if (response.isSuccessful) {
+                    val postDetails = response.body()
+                    callback(postDetails)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<PostDetails>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }
+
 }

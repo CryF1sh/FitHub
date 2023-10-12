@@ -53,6 +53,8 @@ builder.Services.AddAuthorization();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<ISendGridEmail, SendGridEmail>();
 
+builder.Services.AddTransient<IImageService, ImageService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

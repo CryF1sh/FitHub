@@ -1,34 +1,67 @@
-<LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.home.CreatePostFragment">
 
-    <!-- Поле ввода заголовка -->
-    <EditText
-        android:id="@+id/editTextTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Заголовок" />
+        android:orientation="vertical">
 
-    <!-- Поле ввода содержимого -->
-    <EditText
-        android:id="@+id/editTextContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Содержимое"
-        android:layout_marginTop="16dp" />
+        <!-- Титульное изображение -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp">
+            <ImageView
+                android:id="@+id/imageViewTitleImage"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
 
-    <!-- Кнопка для создания статьи -->
-    <Button
-        android:id="@+id/buttonCreatePost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Создать статью"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonChooseImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Выбрать титульное изображение"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
+        <!-- Поле ввода заголовка -->
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Заголовок" />
+
+        <!-- Поле ввода содержимого -->
+        <EditText
+            android:id="@+id/editTextContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Содержимое"
+            android:layout_marginTop="16dp"
+            android:inputType="textMultiLine"
+            android:gravity="top|start" />
+        <!-- Кнопка для создания статьи -->
+        <Button
+            android:id="@+id/buttonCreatePost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Создать статью"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="64dp"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
