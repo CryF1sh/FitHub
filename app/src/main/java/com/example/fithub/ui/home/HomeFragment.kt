@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -27,6 +28,7 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
+
 
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
@@ -67,12 +69,32 @@ class HomeFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+        val searchView = binding.searchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterPosts(newText)
+                return true
+            }
+        })
+
         return view
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         postAdapter.clear()
+    }
+
+    private fun filterPosts(query: String?) {
+        val filteredPosts = homeViewModel.posts.value.orEmpty().filter { post ->
+            post.title.contains(query.orEmpty(), ignoreCase = true)
+        }
+        postAdapter.posts = filteredPosts
+        postAdapter.notifyDataSetChanged()
     }
 }
 
