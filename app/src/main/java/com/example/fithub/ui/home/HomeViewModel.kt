@@ -33,42 +33,31 @@ class HomeViewModel : ViewModel() {
     private val postService = ServiceGenerator.postService
     private val imageService = ServiceGenerator.imageService
 
-    private var currentPage = 1
-    var isLastPage = false
-    private var isLoadingData = false
+    private var isDataLoaded = false
 
     fun loadPosts() {
-        if (isLoadingData || isLastPage) {
+        if (isDataLoaded) {
             return
         }
 
         _isLoading.postValue(true)
 
-        postService.getPosts(currentPage).enqueue(object : Callback<List<Post>> {
+        postService.getPosts(1).enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if (response.isSuccessful) {
                     val posts = response.body() ?: emptyList()
-
-                    if (posts.isNotEmpty()) {
-                        currentPage++
-                        val currentPosts = _posts.value.orEmpty().toMutableList()
-                        currentPosts.addAll(posts)
-                        _posts.postValue(currentPosts)
-                    } else {
-                        isLastPage = true
-                    }
+                    _posts.postValue(posts)
                 } else {
                     // Обработка ошибки при загрузке постов
                 }
 
                 _isLoading.postValue(false)
-                isLoadingData = false
+                isDataLoaded = true
             }
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 // Обработка ошибки при сетевом запросе
                 _isLoading.postValue(false)
-                isLoadingData = false
             }
         })
     }
