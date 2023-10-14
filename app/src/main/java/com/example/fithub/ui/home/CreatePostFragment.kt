@@ -74,7 +74,6 @@ class CreatePostFragment : Fragment() {
                     }
                 }
             } ?: run {
-                // В этой ветке у вас нет выбранного изображения, можно оставить titleImageId как null
                 homeViewModel.createPost(title, content, jwtToken, titleImageId = null) { success ->
                     if (success) {
                         showToast("Статья успешно создана")

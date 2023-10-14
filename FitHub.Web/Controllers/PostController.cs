@@ -59,7 +59,7 @@ namespace FitHub.Web.Controllers
                     CreatorFirstName = p.User.Firstname,
                     CreatorLastName = p.User.Lastname,
                     CreatorProfilePictureId = p.User.Profilepictureid,
-                    CreationDate = p.Creationdate,
+                    CreationDate = p.Creationdate.ToString(),
                     Content = p.Content
                 })
                 .FirstOrDefaultAsync();

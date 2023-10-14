@@ -7,7 +7,7 @@
         public string CreatorFirstName { get; set; }
         public string CreatorLastName { get; set; }
         public int? CreatorProfilePictureId { get; set; }
-        public DateTime? CreationDate { get; set; }
+        public string CreationDate { get; set; }
         public string Content { get; set; }
     }
 }

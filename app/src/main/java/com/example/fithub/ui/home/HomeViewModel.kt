@@ -21,6 +21,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 class HomeViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
@@ -124,15 +126,15 @@ class HomeViewModel : ViewModel() {
             headers["Authorization"] = "Bearer $token"
         }
 
-        val imageFile = File(imageUri.path)
+        val imageFile = File(imageUri.path) // Тут у меня ошибка на получение полного пути файла
 
-        //if (!imageFile.exists()) {
-        //    callback(null)
-        //    return
-        //}
+        if (!imageFile.exists()) {
+            callback(null)
+            return
+        }
 
         val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-        val body = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+        val body = MultipartBody.Part.createFormData("file", imageFile.name, requestFile) //name: "image" было
 
         imageService.uploadImage(body, headers).enqueue(object : Callback<UploadResponse> {
             override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {

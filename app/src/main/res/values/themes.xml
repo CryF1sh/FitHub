@@ -12,5 +12,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+    </style>
+    <style name="SearchViewStyle" parent="@style/Widget.AppCompat.SearchView">
+        <item name="android:background">@color/white</item>
     </style>
 </resources>
