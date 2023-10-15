@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.fithub.R
 import com.example.fithub.api.PostAdapter
 import com.example.fithub.databinding.FragmentHomeBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -21,6 +23,7 @@ class HomeFragment : Fragment() {
     private val postAdapter = PostAdapter(emptyList())
     private lateinit var recyclerView: RecyclerView
     private lateinit var createPostButton: Button
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +37,8 @@ class HomeFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewPosts)
         createPostButton = view.findViewById(R.id.createPostButton)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+
 
         recyclerView.adapter = postAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -47,9 +52,19 @@ class HomeFragment : Fragment() {
 
         homeViewModel.loadPosts()
 
+        swipeRefreshLayout.setOnRefreshListener {
+            homeViewModel.loadPosts()
+            swipeRefreshLayout.isRefreshing = false
+        }
+
         createPostButton.setOnClickListener {
             val action = HomeFragmentDirections.actionHomeFragmentToCreatePostFragment()
             findNavController().navigate(action)
+        }
+
+        val scrollToTopButton: FloatingActionButton = view.findViewById(R.id.scrollToTopButton)
+        scrollToTopButton.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
         }
 
         val searchView = binding.searchView

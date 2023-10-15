@@ -20,16 +20,18 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
                 app:cardCornerRadius="12dp">
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:iconifiedByDefault="false"
+                    android:layout_marginBottom="4dp"
                     android:queryHint="Поиск"
                     app:layout_collapseMode="parallax"
                     style="?attr/searchViewStyle"/>
@@ -38,14 +40,19 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- RecyclerView с контентом -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPosts"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-    <!-- Кнопка "Создать пост" снизу и отступом в 64dp -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPosts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <Button
         android:id="@+id/createPostButton"
         android:layout_width="wrap_content"
@@ -53,6 +60,20 @@
         android:text="Создать пост"
         app:layout_anchor="@id/recyclerViewPosts"
         app:layout_anchorGravity="bottom|center_horizontal"
-        android:layout_margin="64dp"        />
+        android:layout_margin="64dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scrollToTopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="64dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_scroll_to_top"
+    app:elevation="6dp"
+        app:backgroundTint="@color/white"
+    app:pressedTranslationZ="12dp"
+    app:layout_anchor="@id/recyclerViewPosts"
+    app:layout_anchorGravity="bottom|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
