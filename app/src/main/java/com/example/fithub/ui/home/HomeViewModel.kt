@@ -1,6 +1,9 @@
 package com.example.fithub.ui.home
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
@@ -24,7 +27,7 @@ import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val context: Context) : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>> = _posts
     private val _isLoading = MutableLiveData<Boolean>()
@@ -62,15 +65,15 @@ class HomeViewModel : ViewModel() {
         })
     }
 
-    private fun loadImageForPost(post: Post, imageId: Int) {
-        imageService.getImageById(imageId).enqueue(object : Callback<ResponseBody> {
+    private fun loadImageForPost(post: Post, titleImageId: Int) {
+        imageService.getImageById(titleImageId).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     val imageBytes = response.body()?.bytes()
                     if (imageBytes != null) {
-                        // Преобразуйте imageBytes в Bitmap и установите его в post
-                        // Например, можно использовать BitmapFactory.decodeByteArray()
-                        // и установить изображение в post.titleImage
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        post.titleImage = bitmap
+                        _posts.postValue(_posts.value) // Обновить LiveData для отображения изменений
                     }
                 } else {
                     // Обработка ошибки при загрузке изображения
@@ -82,6 +85,7 @@ class HomeViewModel : ViewModel() {
             }
         })
     }
+
     fun createPost(title: String, content: String, jwtToken: String?, titleImageId: Int?, callback: (Boolean) -> Unit) {
         val newPost = PostCreate(title = title, content = content, titleImageId = titleImageId)
 
@@ -115,7 +119,9 @@ class HomeViewModel : ViewModel() {
             headers["Authorization"] = "Bearer $token"
         }
 
-        val imageFile = File(imageUri.path) // Тут у меня ошибка на получение полного пути файла
+        val imageFilePath = getRealPathFromURI(imageUri)
+        val imageFile = File(imageFilePath)
+        //val imageFile = File(imageUri.path) // Тут у меня ошибка на получение полного пути файла
 
         if (!imageFile.exists()) {
             callback(null)
@@ -129,13 +135,21 @@ class HomeViewModel : ViewModel() {
             override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
                 if (response.isSuccessful) {
                     val uploadResponse = response.body()
-                    callback(uploadResponse)
+                    if (uploadResponse != null) {
+                        callback(uploadResponse)
+                    } else {
+                        Log.e("UploadImage", "Response body is null")
+                        callback(null)
+                    }
                 } else {
+                    Log.e("UploadImage", "Response unsuccessful: ${response.code()}")
                     callback(null)
                 }
             }
 
+
             override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                Log.e("UploadImage", "Upload failed", t)
                 callback(null)
             }
         })
@@ -158,5 +172,20 @@ class HomeViewModel : ViewModel() {
             }
         })
     }
+
+    fun getRealPathFromURI(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(uri, projection, null, null, null)
+        return if (cursor != null) {
+            val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            val filePath = cursor.getString(columnIndex)
+            cursor.close()
+            filePath
+        } else {
+            null
+        }
+    }
+
 
 }

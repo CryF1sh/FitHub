@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.fithub.R
 import com.example.fithub.api.PostAdapter
 import com.example.fithub.databinding.FragmentHomeBinding
+import com.example.fithub.utils.HomeViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HomeFragment : Fragment() {
@@ -33,7 +34,8 @@ class HomeFragment : Fragment() {
         val view = binding.root
 
 
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        //homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this, HomeViewModelFactory(requireContext())).get(HomeViewModel::class.java)
 
         recyclerView = view.findViewById(R.id.recyclerViewPosts)
         createPostButton = view.findViewById(R.id.createPostButton)

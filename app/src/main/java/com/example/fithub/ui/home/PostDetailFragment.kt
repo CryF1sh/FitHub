@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.fithub.databinding.FragmentPostDetailBinding
+import com.example.fithub.utils.HomeViewModelFactory
 
 class PostDetailFragment : Fragment() {
     private lateinit var binding: FragmentPostDetailBinding
@@ -19,7 +20,8 @@ class PostDetailFragment : Fragment() {
         binding = FragmentPostDetailBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        //homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this, HomeViewModelFactory(requireContext())).get(HomeViewModel::class.java)
 
         val postId = arguments?.getInt("postId") ?: 0
 
