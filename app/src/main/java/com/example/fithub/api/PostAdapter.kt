@@ -1,15 +1,24 @@
 package com.example.fithub.api
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.fithub.R
+import com.example.fithub.api.ServiceGenerator
+import com.example.fithub.api.ServiceGenerator.imageService
 import com.example.fithub.databinding.ItemPostBinding
 import com.example.fithub.models.Post
 import com.example.fithub.ui.home.PostDetailFragmentDirections
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -38,7 +47,8 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
             val formattedDate = post.getFormattedCreationDate()
             binding.creatorNameAndDateTextView.text = "${post.creatorFirstName} ${post.creatorLastName}, ${formattedDate}"
             if (post.titleImageId != null) {
-
+                Log.e("PostHaveImage", "Post ${post.postId} have image:${post.titleImageId}")
+                loadImageForPost(post.titleImageId)
             } else {
                 binding.postTitleImage.setImageResource(R.drawable.default_post_image)
             }
@@ -47,6 +57,35 @@ class PostAdapter(var posts: List<Post>) : RecyclerView.Adapter<PostAdapter.View
                 it.findNavController().navigate(action)
             }
 
+        }
+        private fun loadImageForPost(imageId: Int) {
+            imageService.getImageById(imageId).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        val imageBytes = response.body()?.bytes()
+                        if (imageBytes != null) {
+                            // Логируем успешную загрузку изображения
+                            Log.d("ImageLoading", "Image loaded successfully")
+                            Glide.with(itemView.context)
+                                .asBitmap()
+                                .load(imageBytes)
+                                .placeholder(R.drawable.default_post_image)
+                                .into(binding.postTitleImage)
+                        } else {
+                            // Обработка ошибки загрузки бинарных данных изображения
+                            Log.e("ImageLoading", "Image bytes are null")
+                        }
+                    } else {
+                        // Обработка ошибки при загрузке изображения
+                        Log.e("ImageLoading", "Image loading failed with code: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // Обработка ошибки при сетевом запросе изображения
+                    Log.e("ImageLoading", "Image loading failed with exception: ${t.message}")
+                }
+            })
         }
     }
 

@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.fithub.databinding.FragmentCreatePostBinding
-import com.example.fithub.models.UploadResponse
 import com.example.fithub.utils.HomeViewModelFactory
 
 class CreatePostFragment : Fragment() {
@@ -28,16 +27,6 @@ class CreatePostFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
 
     private var selectedTitleImageUri: Uri? = null
-    private val getTitleContent =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    selectedTitleImageUri = uri
-                    binding.imageViewTitleImage.setImageURI(uri)
-                }
-            }
-        }
-
     private val chooseImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
@@ -82,10 +71,9 @@ class CreatePostFragment : Fragment() {
             val content = contentEditText.text.toString()
             val jwtToken = sharedPreferencesManager.getAuthToken()
             selectedTitleImageUri?.let { uri ->
-                homeViewModel.uploadImage(uri, jwtToken) { uploadResponse ->
-                    if (uploadResponse != null) {
-                        val titleImageId = uploadResponse.imageId
-                        homeViewModel.createPost(title, content, jwtToken, titleImageId) { success ->
+                homeViewModel.uploadImage(uri, jwtToken) { imageId ->
+                    if (imageId != null) {
+                        homeViewModel.createPost(title, content, jwtToken, imageId) { success ->
                             if (success) {
                                 showToast("Статья успешно создана")
                                 findNavController().navigateUp()
@@ -109,6 +97,7 @@ class CreatePostFragment : Fragment() {
                 }
             }
         }
+
 
         return view
     }

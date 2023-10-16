@@ -1,11 +1,9 @@
 package com.example.fithub.ui.home
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,10 +12,8 @@ import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.models.PostCreate
 import com.example.fithub.models.PostDetails
 import com.example.fithub.models.UploadResponse
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -65,29 +61,10 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         })
     }
 
-    private fun loadImageForPost(post: Post, titleImageId: Int) {
-        imageService.getImageById(titleImageId).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    val imageBytes = response.body()?.bytes()
-                    if (imageBytes != null) {
-                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                        post.titleImage = bitmap
-                        _posts.postValue(_posts.value) // Обновить LiveData для отображения изменений
-                    }
-                } else {
-                    // Обработка ошибки при загрузке изображения
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // Обработка ошибки при сетевом запросе изображения
-            }
-        })
-    }
-
     fun createPost(title: String, content: String, jwtToken: String?, titleImageId: Int?, callback: (Boolean) -> Unit) {
         val newPost = PostCreate(title = title, content = content, titleImageId = titleImageId)
+
+
 
         val postService = ServiceGenerator.postService
 
@@ -113,7 +90,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             }
         })
     }
-    fun uploadImage(imageUri: Uri, jwtToken: String?, callback: (UploadResponse?) -> Unit) {
+    fun uploadImage(imageUri: Uri, jwtToken: String?, callback: (Int?) -> Unit) {
         val headers = HashMap<String, String>()
         jwtToken?.let { token ->
             headers["Authorization"] = "Bearer $token"
@@ -136,7 +113,8 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 if (response.isSuccessful) {
                     val uploadResponse = response.body()
                     if (uploadResponse != null) {
-                        callback(uploadResponse)
+                        val imageId = uploadResponse.imageId
+                        callback(imageId)
                     } else {
                         Log.e("UploadImage", "Response body is null")
                         callback(null)

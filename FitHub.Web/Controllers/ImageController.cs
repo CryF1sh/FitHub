@@ -41,6 +41,27 @@ namespace FitHub.Web.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("{imageId}")]
+        [AllowAnonymous]
+        public IActionResult GetImage(int imageId)
+        {
+            try
+            {
+                var imageBytes = _imageService.GetImageBytes(imageId);
+
+                if (imageBytes != null)
+                {
+                    return File(imageBytes, "image/*");
+                }
+
+                return NotFound("Изоображение не найдено");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ошибка сервера: {ex.Message}");
+            }
+        }
     }
 
 }

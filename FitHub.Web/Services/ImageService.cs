@@ -41,5 +41,19 @@ namespace FitHub.Web.Services
                 return stream.ToArray();
             }
         }
+
+        public byte[] GetImageBytes(int imageId)
+        {
+            byte[] imageBytes = null;
+            var image = _context.Images.FirstOrDefault(i => i.Imageid == imageId);
+
+            if (image != null)
+            {
+                imageBytes = image.Imagedata;
+            }
+
+            return imageBytes;
+        }
+
     }
 }

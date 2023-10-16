@@ -38,7 +38,7 @@ namespace FitHub.Web.Controllers
                     CreatorFirstName = p.User.Firstname,
                     CreatorLastName = p.User.Lastname,
                     CreationDate = p.Creationdate.ToString(),
-
+                    TitleImageId = p.Titleimageid,
                 })
                 .ToListAsync();
 
@@ -85,7 +85,8 @@ namespace FitHub.Web.Controllers
                     Userid = userId,
                     Title = postС.Title,
                     Content = postС.Content,
-                    Creationdate = DateTime.Now
+                    Titleimageid = postС.TitleImageId,
+                    Creationdate = DateTime.Now,
                     // Добавить сюда позже поля связанные с изоображениями
                 };
 
