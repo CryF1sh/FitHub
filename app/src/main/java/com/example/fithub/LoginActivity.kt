@@ -13,6 +13,7 @@ import retrofit2.Response
 import android.content.Intent
 import android.widget.Toast
 import com.example.fithub.models.LoginRequest
+import com.example.fithub.ui.registration.RegistrationActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
         val usernameEditText = findViewById<EditText>(R.id.editTextUsername)
         val passwordEditText = findViewById<EditText>(R.id.editTextPassword)
         val loginButton = findViewById<Button>(R.id.loginButton)
+        val registerButton = findViewById<Button>(R.id.registerButton)
 
         val sharedPreferencesManager = SharedPreferencesManager(this)
 
@@ -33,6 +35,10 @@ class LoginActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString()
 
             loginUser(username, password, sharedPreferencesManager)
+        }
+        registerButton.setOnClickListener {
+            val intent = Intent(this, RegistrationActivity::class.java)
+            startActivity(intent)
         }
     }
 

@@ -45,6 +45,18 @@ namespace FitHub.Web.Controllers
             return Ok(posts);
         }
 
+        // GET: api/posts-fulldata
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPostsFullData()
+        {
+            var posts = await _context.Posts
+              .Where(p => p.Statusid == 0)
+              .ToListAsync();
+
+            return Ok(posts);
+        }
+
         // GET: api/posts/{id}
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -87,6 +99,7 @@ namespace FitHub.Web.Controllers
                     Content = postС.Content,
                     Titleimageid = postС.TitleImageId,
                     Creationdate = DateTime.Now,
+                    Statusid = 0,
                     // Добавить сюда позже поля связанные с изоображениями
                 };
 

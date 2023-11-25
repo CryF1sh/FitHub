@@ -26,8 +26,8 @@ namespace FitHub.Web.Modeles.Identity
 
         public DateOnly Birthdate { get; set; }
 
-        public string Location { get; set; }
+        //public string Location { get; set; }
 
-        public List<int> Usersports { get; set; }
+        //public List<int> Usersports { get; set; }
     }
 }
