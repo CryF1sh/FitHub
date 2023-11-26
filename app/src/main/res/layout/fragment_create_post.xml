@@ -31,7 +31,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/buttonChooseImage"
+            android:id="@+id/buttonChooseTitleImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Выбрать титульное изображение"
@@ -50,10 +50,20 @@
             android:id="@+id/editTextContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Содержимое"
+            android:hint="Введите текст статьи..."
             android:layout_marginTop="16dp"
             android:inputType="textMultiLine"
             android:gravity="top|start" />
+
+        <!-- Кнопка для добавления изоображения -->
+        <Button
+            android:id="@+id/buttonChooseImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Добавить изображение"/>
+
         <!-- Кнопка для создания статьи -->
         <Button
             android:id="@+id/buttonCreatePost"

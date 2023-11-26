@@ -22,6 +22,11 @@ object ServiceGenerator {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+    fun getBaseUrl(): String {
+        return BASE_URL
+    }
+
+
     val authService: AuthService = retrofit.create(AuthService::class.java)
     val postService: PostService = retrofit.create(PostService::class.java)
     val imageService: ImageService = retrofit.create(ImageService::class.java)

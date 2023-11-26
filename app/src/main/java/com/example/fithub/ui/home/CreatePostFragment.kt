@@ -19,19 +19,29 @@ import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.databinding.FragmentCreatePostBinding
 import com.example.fithub.utils.HomeViewModelFactory
 
 class CreatePostFragment : Fragment() {
     private lateinit var binding: FragmentCreatePostBinding
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var SG: ServiceGenerator
 
     private var selectedTitleImageUri: Uri? = null
-    private val chooseImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val chooseTitleImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
                 selectedTitleImageUri = uri
                 binding.imageViewTitleImage.setImageURI(uri)
+            }
+        }
+    }
+    private val chooseImageForTextLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                // Вставить изображение в текст после успешного выбора
+                insertImageIntoText(uri)
             }
         }
     }
@@ -49,11 +59,12 @@ class CreatePostFragment : Fragment() {
         val titleEditText = binding.editTextTitle
         val contentEditText = binding.editTextContent
         val createPostButton = binding.buttonCreatePost
-        val chooseImageButton = binding.buttonChooseImage
+        val chooseTitleImageButton = binding.buttonChooseTitleImage
+        val chooseImageForTextButton = binding.buttonChooseImage
 
         val sharedPreferencesManager = SharedPreferencesManager(requireContext())
-
-        chooseImageButton.setOnClickListener {
+        val jwtToken = sharedPreferencesManager.getAuthToken()
+        chooseTitleImageButton.setOnClickListener {
             if (hasStoragePermission()) {
                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_REQUEST_CODE)
@@ -69,7 +80,6 @@ class CreatePostFragment : Fragment() {
         createPostButton.setOnClickListener {
             val title = titleEditText.text.toString()
             val content = contentEditText.text.toString()
-            val jwtToken = sharedPreferencesManager.getAuthToken()
             selectedTitleImageUri?.let { uri ->
                 homeViewModel.uploadImage(uri, jwtToken) { imageId ->
                     if (imageId != null) {
@@ -98,8 +108,55 @@ class CreatePostFragment : Fragment() {
             }
         }
 
+        chooseImageForTextButton.setOnClickListener {
+            if (hasStoragePermission()) {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_REQUEST_CODE)
+                } else {
+                    startImageSelectionForText()
+                }
+            } else {
+                requestStoragePermission()
+            }
+        }
+
 
         return view
+    }
+
+    private fun insertImageIntoText(imageUri: Uri) {
+        val sharedPreferencesManager = SharedPreferencesManager(requireContext())
+        val jwtToken = sharedPreferencesManager.getAuthToken()
+
+        // Получаем текущий текст из EditText
+        val currentText = binding.editTextContent.text.toString()
+
+        // Объединяем текущий текст с заглушкой для изображения
+        val newText = "$currentText\n[Изображение загружается...]"
+
+        // Устанавливаем объединенный текст в EditText
+        binding.editTextContent.setText(newText)
+
+        val baseURL = ServiceGenerator.getBaseUrl()
+        // Загружаем изображение на сервер и обновляем текст после получения URL
+        homeViewModel.uploadImage(imageUri, jwtToken) { imageUrl ->
+            if (!imageUrl.toString().isNullOrEmpty()) {
+                // Формируем Markdown-разметку с полученным URL
+                val markdownText = "![Alt текст]($baseURL/api/images/$imageUrl)"
+
+                // Обновляем текст в EditText
+                val updatedText = "$currentText\n$markdownText"
+                binding.editTextContent.setText(updatedText)
+            } else {
+                showToast("Ошибка при загрузке изображения")
+            }
+        }
+    }
+
+
+    private fun startImageSelectionForText() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        chooseImageForTextLauncher.launch(intent)
     }
 
     private fun showToast(message: String) {
@@ -123,7 +180,7 @@ class CreatePostFragment : Fragment() {
 
     private fun startImageSelection() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        chooseImageLauncher.launch(intent)
+        chooseTitleImageLauncher.launch(intent)
     }
 
     companion object {
