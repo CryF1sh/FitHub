@@ -9,11 +9,11 @@ public partial class Post
 
     public string Userid { get; set; }
 
-    public string? Title { get; set; }
+    public string Title { get; set; }
 
     public int? Titleimageid { get; set; }
 
-    public string? Content { get; set; }
+    public string Content { get; set; }
 
     public DateTime? Creationdate { get; set; }
 

@@ -2,6 +2,7 @@
 using FitHub.Web.Data;
 using FitHub.Web.Modeles;
 using FitHub.Web.Modeles.PostsModels;
+using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace FitHub.Web.Controllers
         // GET: api/posts
         [HttpGet]
         [AllowAnonymous]
+        [Route("api/posts")]
         public async Task<IActionResult> GetPosts()
         {
             var posts = await _context.Posts
@@ -45,16 +47,49 @@ namespace FitHub.Web.Controllers
             return Ok(posts);
         }
 
-        // GET: api/posts-fulldata
+        // GET: api/posts_list_1c
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPostsFullData()
+        [Route("api/posts_list_1c")]
+        public async Task<IActionResult> GetMinimalPostData()
         {
-            var posts = await _context.Posts
-              .Where(p => p.Statusid == 0)
-              .ToListAsync();
+            var minimalData = await _context.Posts
+                .Where(p => p.Statusid == 0)
+                .Select(p => new PostDetails
+                {
+                    Postid = p.Postid,
+                    Title = p.Title,
+                    //Status = p.Statusid
+                })
+                .ToListAsync();
 
-            return Ok(posts);
+            return Ok(minimalData);
+        }
+
+        // GET: api/posts_content_to_HTML/{id}
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        [Route("api/posts_content_to_HTML/{id}")]
+        public async Task<IActionResult> GetPostFullData(int id)
+        {
+            var pipeline = new MarkdownPipelineBuilder().Build();
+            var post = await _context.Posts
+              .Where(p => p.Postid == id).Select(p => new PostDetails
+              {
+                  CreatorFirstName = p.User.Firstname,
+                  CreatorLastName = p.User.Lastname,
+                  CreatorProfilePictureId = p.User.Profilepictureid,
+                  CreationDate = p.Creationdate.ToString(),
+                  Content = Markdown.ToHtml(p.Content, pipeline, null),
+              })
+              .FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(post);
         }
 
         // GET: api/posts/{id}
