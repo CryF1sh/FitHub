@@ -28,7 +28,7 @@ namespace FitHub.Web.Controllers
         // GET: api/posts
         [HttpGet]
         [AllowAnonymous]
-        [Route("api/posts")]
+        [Route("posts")]
         public async Task<IActionResult> GetPosts()
         {
             var posts = await _context.Posts
@@ -43,14 +43,14 @@ namespace FitHub.Web.Controllers
                     TitleImageId = p.Titleimageid,
                 })
                 .ToListAsync();
-
+                
             return Ok(posts);
         }
 
         // GET: api/posts_list_1c
         [HttpGet]
         [AllowAnonymous]
-        [Route("api/posts_list_1c")]
+        [Route("posts_list_1c")]
         public async Task<IActionResult> GetMinimalPostData()
         {
             var minimalData = await _context.Posts
@@ -66,10 +66,9 @@ namespace FitHub.Web.Controllers
             return Ok(minimalData);
         }
 
-        // GET: api/posts_content_to_HTML/{id}
-        [HttpGet("{id}")]
+        // GET: api/posts_content_to_HTML/{ididpost}
+        [HttpGet("posts_content_to_HTML/{id}")]
         [AllowAnonymous]
-        [Route("api/posts_content_to_HTML/{id}")]
         public async Task<IActionResult> GetPostFullData(int id)
         {
             var pipeline = new MarkdownPipelineBuilder().Build();
