@@ -9,7 +9,7 @@ import retrofit2.http.*
 
 interface PostService {
     @GET("api/posts/posts")
-    fun getPosts(@Query("page") page: Int): Call<List<Post>>
+    fun getPosts(@Query("page") page: Int, @Query("pageSize") pageSize: Int): Call<List<Post>>
 
     @GET("api/posts/{id}")
     fun getPostById(@Path("id") postId: Int): Call<PostDetails>

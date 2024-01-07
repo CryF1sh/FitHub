@@ -1,6 +1,6 @@
 ﻿namespace FitHub.Web.Interfaces
 {
-    public interface ISendGridEmail
+    public interface ISendEmail
     {
         Task SendEmailAsync(string email, string subject, string message);
     }

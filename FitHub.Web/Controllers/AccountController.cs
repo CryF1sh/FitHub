@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using FitHub.Web.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using FitHub.Web.Interfaces;
+using System.Text.Encodings.Web;
 
 namespace FitHub.Web.Controllers
 {
@@ -13,10 +14,10 @@ namespace FitHub.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtService _jwtService;
-        private readonly ISendGridEmail _emailSender;
+        private readonly ISendEmail _emailSender;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, JwtService jwtService, ILogger<AccountController> logger, ISendGridEmail emailSender)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, JwtService jwtService, ILogger<AccountController> logger, ISendEmail emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -126,7 +127,7 @@ namespace FitHub.Web.Controllers
                         "Account",
                         new { userId = user.Id, token = token },
                         protocol: HttpContext.Request.Scheme);
-
+                    //var encodedCallbackUrl = HtmlEncoder.Default.Encode(callbackUrl);
                     try
                     {
                         await _emailSender.SendEmailAsync(

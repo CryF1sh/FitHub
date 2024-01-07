@@ -6,12 +6,12 @@ using FitHub.Web.Modeles.Identity;
 
 namespace FitHub.Web.Services
 {
-    public class SendGridEmail : ISendGridEmail
+    public class SendEmail : ISendEmail
     {
         private readonly EmailSettings _emailSettings;
-        private readonly ILogger<SendGridEmail> _logger;
+        private readonly ILogger<SendEmail> _logger;
 
-        public SendGridEmail(IOptions<EmailSettings> emailSettings, ILogger<SendGridEmail> logger)
+        public SendEmail(IOptions<EmailSettings> emailSettings, ILogger<SendEmail> logger)
         {
             _emailSettings = emailSettings.Value;
             _logger = logger;

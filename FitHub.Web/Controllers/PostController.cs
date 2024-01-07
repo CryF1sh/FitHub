@@ -29,10 +29,14 @@ namespace FitHub.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("posts")]
-        public async Task<IActionResult> GetPosts()
+        public async Task<IActionResult> GetPosts([FromQuery] int page, [FromQuery] int pageSize)
         {
             var posts = await _context.Posts
                 .Include(p => p.User)
+                .OrderByDescending(p => p.Creationdate) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                //.Where(p => p.Statusid == 1)
                 .Select(p => new PostListItem 
                 {
                     PostId = p.Postid,

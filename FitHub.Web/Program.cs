@@ -51,7 +51,7 @@ options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 builder.Services.AddAuthorization();
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<ISendGridEmail, SendGridEmail>();
+builder.Services.AddTransient<ISendEmail, SendEmail>();
 
 builder.Services.AddTransient<IImageService, ImageService>();
 

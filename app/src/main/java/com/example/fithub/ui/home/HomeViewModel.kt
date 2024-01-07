@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.fithub.api.PostAdapter
 import com.example.fithub.models.Post
 import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.models.PostCreate
@@ -16,6 +17,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
+import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,39 +26,51 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 
 class HomeViewModel(private val context: Context) : ViewModel() {
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>> = _posts
+    private var _posts = MutableLiveData<List<Post>?>()
+    val posts: LiveData<List<Post>?> = _posts
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-
+    private val postAdapter = PostAdapter(emptyList())
     private val postService = ServiceGenerator.postService
     private val imageService = ServiceGenerator.imageService
 
     private var isDataLoaded = false
 
-    fun loadPosts() {
-        if (isDataLoaded) {
-            return
-        }
 
-        _isLoading.postValue(true)
+    private val pageSize = 5
 
-        postService.getPosts(1).enqueue(object : Callback<List<Post>> {
+    fun loadPosts(currentPage:Int) {
+//        if (isDataLoaded) {
+//            return
+//        }
+
+//        _isLoading.postValue(true)
+
+        postService.getPosts(currentPage, pageSize).enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if (response.isSuccessful) {
-                    val posts = response.body() ?: emptyList()
-                    _posts.postValue(posts)
+                    val newPosts = response.body() ?: emptyList()
+                    val currentPosts = _posts.value ?: emptyList()
+                    val updatedPosts = ArrayList<Post>(currentPosts)
+                    updatedPosts.addAll(newPosts)
+
+                    _posts.postValue(updatedPosts)
+
+//                    postAdapter.clear()
+//                    postAdapter.posts = updatedPosts
+//                    postAdapter.notifyDataSetChanged()
+
                 } else {
                     // Обработка ошибки при загрузке постов
                 }
 
-                _isLoading.postValue(false)
-                isDataLoaded = true
+//                _isLoading.postValue(false)
+//                isDataLoaded = true
             }
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                 // Обработка ошибки при сетевом запросе
-                _isLoading.postValue(false)
+//                _isLoading.postValue(false)
             }
         })
     }
@@ -163,6 +177,10 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         } else {
             null
         }
+    }
+
+    fun clearPosts() {
+        _posts.postValue(null)
     }
 
 

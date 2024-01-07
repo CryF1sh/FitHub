@@ -1,10 +1,12 @@
 package com.example.fithub.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +20,7 @@ import com.example.fithub.databinding.FragmentHomeBinding
 import com.example.fithub.utils.HomeViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
@@ -25,6 +28,7 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var createPostButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var currentPage = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,17 +49,30 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = postAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        homeViewModel.loadPosts()
+        homeViewModel.loadPosts(1)
 
         homeViewModel.posts.observe(viewLifecycleOwner) { posts ->
-            postAdapter.posts = posts
+            if (posts != null) {
+                postAdapter.posts = posts
+            }
             postAdapter.notifyDataSetChanged()
         }
 
-        homeViewModel.loadPosts()
+        //homeViewModel.loadPosts()
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)) {
+                    homeViewModel.loadPosts(currentPage++)
+                }
+            }
+        })
 
         swipeRefreshLayout.setOnRefreshListener {
-            homeViewModel.loadPosts()
+            currentPage = 1
+            homeViewModel.clearPosts()
+            homeViewModel.loadPosts(currentPage)
             swipeRefreshLayout.isRefreshing = false
         }
 
