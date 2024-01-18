@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -22,6 +23,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.fithub.api.ServiceGenerator
 import com.example.fithub.databinding.FragmentCreatePostBinding
 import com.example.fithub.utils.HomeViewModelFactory
+import io.noties.markwon.Markwon
+import io.noties.markwon.editor.MarkwonEditor
+import io.noties.markwon.editor.MarkwonEditorTextWatcher
+import io.noties.markwon.editor.PersistedSpans
+import java.util.concurrent.Executors
 
 class CreatePostFragment : Fragment() {
     private lateinit var binding: FragmentCreatePostBinding
@@ -61,6 +67,13 @@ class CreatePostFragment : Fragment() {
         val createPostButton = binding.buttonCreatePost
         val chooseTitleImageButton = binding.buttonChooseTitleImage
         val chooseImageForTextButton = binding.buttonChooseImage
+
+        val markwon = Markwon.create(requireContext())
+        val editorContent = MarkwonEditor.builder(markwon).build()
+
+        val textWatcherContent = MarkwonEditorTextWatcher.withPreRender( editorContent, Executors.newCachedThreadPool(), contentEditText)
+        contentEditText.addTextChangedListener(textWatcherContent)
+
 
         val sharedPreferencesManager = SharedPreferencesManager(requireContext())
         val jwtToken = sharedPreferencesManager.getAuthToken()

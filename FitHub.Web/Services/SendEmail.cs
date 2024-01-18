@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
 using FitHub.Web.Modeles.Identity;
+using Microsoft.CodeAnalysis;
 
 namespace FitHub.Web.Services
 {
@@ -34,7 +35,8 @@ namespace FitHub.Web.Services
                     From = new MailAddress(_emailSettings.SenderEmail, _emailSettings.SenderName),
                     Subject = subject,
                     Body = message,
-                    IsBodyHtml = true
+                    //IsBodyHtml = true
+                    IsBodyHtml = false
                 };
 
                 mailMessage.To.Add(email);

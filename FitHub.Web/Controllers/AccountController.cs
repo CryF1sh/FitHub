@@ -1,11 +1,9 @@
 ﻿using FitHub.Data;
+using FitHub.Web.Interfaces;
 using FitHub.Web.Modeles.Identity;
+using FitHub.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using FitHub.Web.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using FitHub.Web.Interfaces;
-using System.Text.Encodings.Web;
 
 namespace FitHub.Web.Controllers
 {
@@ -123,7 +121,7 @@ namespace FitHub.Web.Controllers
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var callbackUrl = Url.Action(
-                        "ResetPassword",
+                        "ResetPasswordPage",
                         "Account",
                         new { userId = user.Id, token = token },
                         protocol: HttpContext.Request.Scheme);
@@ -133,7 +131,7 @@ namespace FitHub.Web.Controllers
                         await _emailSender.SendEmailAsync(
                             model.Email,
                             "Восстановление пароля",
-                            $"Для сброса пароля перейдите по <a href='{callbackUrl}'>ссылке</a>.");
+                            $"Для сброса пароля перейдите по ссылке {callbackUrl}");
 
                         return Ok("Письмо с инструкциями по сбросу пароля отправлено на указанный email.");
                     }
@@ -150,22 +148,24 @@ namespace FitHub.Web.Controllers
             return BadRequest(ModelState);
         }
 
-
+        [ValidateAntiForgeryToken]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByIdAsync(model.UserId);
                 if (user != null)
                 {
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
                     if (result.Succeeded)
                     {
+                        Console.WriteLine("Пароль успешно сброшен.");
                         return Ok("Пароль успешно сброшен.");
                     }
                     else
                     {
+                        Console.WriteLine("Ошибка.");
                         return BadRequest("Ошибка сброса пароля.");
                     }
                 }
@@ -175,6 +175,20 @@ namespace FitHub.Web.Controllers
                 }
             }
             return BadRequest(ModelState);
+        }
+        [HttpGet("reset-password-page", Name = "ResetPasswordPage")]
+        public IActionResult ResetPasswordPage([FromQuery] string userId, [FromQuery] string token)
+        {
+
+            var model = new ResetPasswordModel
+            {
+                UserId = userId,
+                Token = token
+            };
+
+            Console.WriteLine($"UserId: {model.UserId}, Token: {model.Token}");
+
+            return View(model);
         }
 
     }
