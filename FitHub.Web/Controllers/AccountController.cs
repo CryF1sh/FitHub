@@ -50,6 +50,9 @@ namespace FitHub.Web.Controllers
                         //Usersports 
                     };
 
+                    //Добавить проверку Email при регистрации, что не могли регестрировать чужую почту
+                    //генерация кода или токена, отправка его на почту 
+
                     var result = await _userManager.CreateAsync(user, model.Password);
 
                     if (result.Succeeded)
@@ -160,12 +163,22 @@ namespace FitHub.Web.Controllers
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        Console.WriteLine("Пароль успешно сброшен.");
-                        return Ok("Пароль успешно сброшен.");
+                        try
+                        {
+                            await _emailSender.SendEmailAsync(
+                                user.Email,
+                                "Восстановление пароля",
+                                $"Старый пароль был успешно сброшен и обновлён!");
+
+                            return Ok("Пароль успешно сброшен.");
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Произошла ошибка при отправке email. Пожалуйста, попробуйте еще раз.");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Ошибка.");
                         return BadRequest("Ошибка сброса пароля.");
                     }
                 }
@@ -185,8 +198,6 @@ namespace FitHub.Web.Controllers
                 UserId = userId,
                 Token = token
             };
-
-            Console.WriteLine($"UserId: {model.UserId}, Token: {model.Token}");
 
             return View(model);
         }
