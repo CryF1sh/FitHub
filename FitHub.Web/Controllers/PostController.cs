@@ -1,5 +1,6 @@
 ﻿using FitHub.Data;
 using FitHub.Web.Data;
+using FitHub.Web.Interfaces;
 using FitHub.Web.Modeles;
 using FitHub.Web.Modeles.PostsModels;
 using Markdig;
@@ -18,11 +19,15 @@ namespace FitHub.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration Configuration;
+        private readonly ISendEmail _emailSender;
 
-        public PostController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PostController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ISendEmail emailSender, IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
+            Configuration = configuration;
         }
 
         // GET: api/posts
@@ -220,6 +225,99 @@ namespace FitHub.Web.Controllers
             return NoContent();
 
         }
+
+        // PUT: api/posts/updatestatus/{id}
+        [HttpPut("updatestatus/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdatePostStatus(int id, [FromBody] PostStatusUpdate postStatusUpdate)
+        {
+            var existingPost = await _context.Posts.FindAsync(id);
+
+            if (existingPost == null)
+            {
+                return NotFound();
+            }
+
+            var app1CSecretKey = Configuration["AppSettings:1CSecretKey"];
+
+            var requestSecretKey = HttpContext.Request.Headers["SecretKey"].FirstOrDefault();
+
+            if (requestSecretKey != app1CSecretKey)
+            {
+                return Forbid("Неправильный секретный ключ!");
+            }
+
+            existingPost.Statusid = postStatusUpdate.Statusid;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PostExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            try
+            {
+                var userEmail = await _context.Posts
+                    .Include(p => p.User)
+                    .Where(p => p.Postid == id)
+                    .Select(p => new
+                    {
+                        UserEmail = p.User.Email,
+                    })
+                    .FirstOrDefaultAsync();
+
+                var postTitle = await _context.Posts
+                    .Where(p => p.Postid == id)
+                    .Select(p => new
+                    {
+                        PostTitle = p.Title,
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (userEmail != null)
+                {
+                    string email = userEmail.UserEmail;
+                    string statusMessage = "";
+                    if (postStatusUpdate.Statusid == 1) //статус 0 - на рассмотрении, 1 - одобрено, 2 - отклонено, 
+                    {
+                        statusMessage = $"Ваша статья {postTitle.PostTitle} была одобрена.";
+                    }
+                    else if (postStatusUpdate.Statusid == 2)
+                    {
+                        statusMessage = $"Ваша статья {postTitle.PostTitle} была отклонена. Причина: " + postStatusUpdate.Message;
+                    }
+
+                    await _emailSender.SendEmailAsync(
+                           email,
+                           "Изменение статуса статьи",
+                           statusMessage);
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                //if (!PostExists(postStatusUpdate.Postid))
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                //    throw;
+                //}
+            }
+
+            return NoContent();
+        }
+
 
         private bool PostExists(int id)
         {

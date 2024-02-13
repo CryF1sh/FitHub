@@ -31,6 +31,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var secretKey = builder.Configuration.GetSection("AppSettings:SecretKey").Value;
+var app1CSecretKey = builder.Configuration.GetSection("AppSettings:1CSecretKey").Value;
 
 builder.Services.AddAuthentication(options =>
 {
