@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-FitHub.Web-826c264d-5d12-4c53-b064-cafa06a5660b</UserSecretsId>
+    <Copyright>РУПАСОВ</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

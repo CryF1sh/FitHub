@@ -89,6 +89,7 @@ namespace FitHub.Web.Controllers
                   CreatorProfilePictureId = p.User.Profilepictureid,
                   CreationDate = p.Creationdate.ToString(),
                   Content = Markdown.ToHtml(p.Content, pipeline, null),
+                  Titleimageid = p.Titleimageid,
               })
               .FirstOrDefaultAsync();
 
