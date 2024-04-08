@@ -15,4 +15,31 @@ class SharedPreferencesManager(context: Context) {
     fun clearAuthToken() {
         sharedPreferences.edit().remove("auth_token").apply()
     }
+
+    fun saveDiaryEntry(date: String, title: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("diary_entry_date", title)
+        editor.apply()
+    }
+
+    fun getDiaryEntry(date: String): String? {
+        return sharedPreferences.getString("diary_entry_date", null)
+    }
+
+    fun removeDiaryEntry(date: String) {
+        sharedPreferences.edit().remove("diary_entry_date").apply()
+    }
+
+    fun clearAllDiaryEntries() {
+        sharedPreferences.edit().let { editor ->
+            sharedPreferences.all.keys.filter { it.startsWith("diary_entry_") }.forEach {
+                editor.remove(it)
+            }
+            editor.apply()
+        }
+    }
+
+    fun getAllDiaryEntries(): Map<String, *> {
+        return sharedPreferences.all.filterKeys { it.startsWith("diary_entry_") }
+    }
 }

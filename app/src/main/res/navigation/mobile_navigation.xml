@@ -65,11 +65,37 @@
         android:id="@+id/navigation_workout"
         android:name="com.example.fithub.ui.workout.WorkoutFragment"
         android:label="Тренировка"
-        tools:layout="@layout/fragment_workout" />
+        tools:layout="@layout/fragment_workout" >
+        <action
+            android:id="@+id/action_navigation_workout_to_workoutPlansFragment"
+            app:destination="@id/workoutPlansFragment" />
 
+        <action
+            android:id="@+id/action_navigation_workout_to_diaryFragment"
+            app:destination="@id/diaryListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.fithub.ui.profile.ProfileFragment"
         android:label="Личный профиль"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/workoutPlansFragment"
+        android:name="com.example.fithub.ui.workout.WorkoutPlanFragment"
+        android:label="Планы тренировок"
+        tools:layout="@layout/fragment_workoutplan_list">
+        <action
+            android:id="@+id/action_navigation_workoutPlansFragment_to_create"
+            app:destination="@id/createWorkoutPlanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/diaryListFragment"
+        android:name="com.example.fithub.ui.workout.DiaryListFragment"
+        android:label="Дневник"
+        tools:layout="@layout/fragment_diary_list" />
+    <fragment
+        android:id="@+id/createWorkoutPlanFragment"
+        android:name="com.example.fithub.ui.workout.CreateWorkoutPlanFragment"
+        android:label="Создание нового плана"
+        tools:layout="@layout/fragment_create_workout_plan" />
 </navigation>

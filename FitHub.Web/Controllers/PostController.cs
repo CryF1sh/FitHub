@@ -41,7 +41,7 @@ namespace FitHub.Web.Controllers
                 .OrderByDescending(p => p.Creationdate) 
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                //.Where(p => p.Statusid == 1)
+                .Where(p => p.Statusid == 1)
                 .Select(p => new PostListItem 
                 {
                     PostId = p.Postid,
