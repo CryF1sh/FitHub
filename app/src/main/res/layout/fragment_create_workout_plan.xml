@@ -10,21 +10,21 @@
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"
+        android:hint="Название для плана"
         android:inputType="text"/>
 
     <EditText
         android:id="@+id/editTextDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description"
+        android:hint="Описание"
         android:inputType="text"/>
 
     <Switch
         android:id="@+id/switchPrivacy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Privacy"
+        android:text="Приватность"
         android:checked="false"/>
 
     <Button

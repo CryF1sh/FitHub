@@ -36,7 +36,6 @@ class HomeViewModel(private val context: Context) : ViewModel() {
 
     private var isDataLoaded = false
 
-
     private val pageSize = 5
 
     fun loadPosts(currentPage:Int) {
@@ -77,8 +76,6 @@ class HomeViewModel(private val context: Context) : ViewModel() {
 
     fun createPost(title: String, content: String, jwtToken: String?, titleImageId: Int?, callback: (Boolean) -> Unit) {
         val newPost = PostCreate(title = title, content = content, titleImageId = titleImageId)
-
-
 
         val postService = ServiceGenerator.postService
 

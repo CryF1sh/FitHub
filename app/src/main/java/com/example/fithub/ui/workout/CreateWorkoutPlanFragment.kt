@@ -1,23 +1,21 @@
 package com.example.fithub.ui.workout
 
+import SharedPreferencesManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.fithub.R
-import com.example.fithub.models.WorkoutPlanCreate
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
+import com.example.fithub.utils.WorkoutViewModelFactory
 
 class CreateWorkoutPlanFragment : Fragment() {
-
-    private lateinit var nameEditText: TextInputEditText
-    private lateinit var descriptionEditText: TextInputEditText
-    private lateinit var switchPrivacy: SwitchMaterial
-    private lateinit var continueButton: Button
+    private lateinit var WorkoutViewModel: WorkoutViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,27 +23,33 @@ class CreateWorkoutPlanFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_workout_plan, container, false)
 
-        nameEditText = view.findViewById(R.id.editTextName)
-        descriptionEditText = view.findViewById(R.id.editTextDescription)
-        switchPrivacy = view.findViewById(R.id.switchPrivacy)
-        continueButton = view.findViewById(R.id.buttonContinue)
-
-        continueButton.setOnClickListener {
-            val action = WorkoutPlanFragmentDirections.actionNavigationWorkoutPlansFragmentToCreate()
-            findNavController().navigate(action)
-            //createWorkoutPlan()
-        }
-
         return view
     }
 
-    private fun createWorkoutPlan() {
-        val name = nameEditText.text.toString().trim()
-        val description = descriptionEditText.text.toString().trim()
-        val isPrivate = switchPrivacy.isChecked
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val newWorkoutPlan = WorkoutPlanCreate(name, description, isPrivate)
+        val nameEditText = view.findViewById<AppCompatEditText>(R.id.editTextName)
+        val descriptionEditText = view.findViewById<AppCompatEditText>(R.id.editTextDescription)
+        val switchPrivacy = view.findViewById<Switch>(R.id.switchPrivacy)
+        val continueButton = view.findViewById<Button>(R.id.buttonContinue)
 
-        //createWorkoutPlan(newWorkoutPlan)
+        WorkoutViewModel = ViewModelProvider(this, WorkoutViewModelFactory(requireContext())).get(WorkoutViewModel::class.java)
+
+        continueButton.setOnClickListener {
+            val sharedPreferencesManager = SharedPreferencesManager(requireContext())
+            val jwtToken = sharedPreferencesManager.getAuthToken()
+            WorkoutViewModel.createWorkoutPlan(nameEditText.toString(), descriptionEditText.toString(), switchPrivacy.isChecked, jwtToken) { planId ->
+                if (planId != null) {
+                    val bundle = Bundle()
+                    bundle.putInt("ID", planId);
+                    findNavController().navigate(R.id.WorkoutPlanEditFragment, bundle)
+                } else {
+                    // Обработка ошибки при создании плана тренировки
+                }
+            }
+
+        }
     }
+
 }

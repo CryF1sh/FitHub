@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
         homeViewModel = ViewModelProvider(this, HomeViewModelFactory(requireContext())).get(HomeViewModel::class.java)
 
         recyclerView = view.findViewById(R.id.recyclerViewPosts)
-        createPostButton = view.findViewById(R.id.createPostButton)
+//        createPostButton = view.findViewById(R.id.createPostButton)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
 
@@ -76,10 +76,10 @@ class HomeFragment : Fragment() {
             swipeRefreshLayout.isRefreshing = false
         }
 
-        createPostButton.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToCreatePostFragment()
-            findNavController().navigate(action)
-        }
+//        createPostButton.setOnClickListener {
+//            val action = HomeFragmentDirections.actionHomeFragmentToCreatePostFragment()
+//            findNavController().navigate(action)
+//        }
 
         val scrollToTopButton: FloatingActionButton = view.findViewById(R.id.scrollToTopButton)
         scrollToTopButton.setOnClickListener {
@@ -99,6 +99,15 @@ class HomeFragment : Fragment() {
         })
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        createPostButton = view.findViewById(R.id.createPostButton)
+        val navController = findNavController()
+        createPostButton.setOnClickListener {
+            navController.navigate(R.id.createPostFragment)
+        }
     }
 
     override fun onDestroyView() {

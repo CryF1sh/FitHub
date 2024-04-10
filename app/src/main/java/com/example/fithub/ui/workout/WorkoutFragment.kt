@@ -24,20 +24,39 @@ class WorkoutFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_workout, container, false)
 
+//        val planButton = view.findViewById<CardView>(R.id.planButton)
+//        val diaryButton = view.findViewById<CardView>(R.id.diaryButton)
+//
+//        planButton.setOnClickListener {
+//            val action = WorkoutFragmentDirections.actionNavigationWorkoutToWorkoutPlansFragment()
+//            findNavController().navigate(action)
+//        }
+//
+//        diaryButton.setOnClickListener {
+//            val action = WorkoutFragmentDirections.actionNavigationWorkoutToDiaryFragment()
+//            findNavController().navigate(action)
+//        }
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val planButton = view.findViewById<CardView>(R.id.planButton)
         val diaryButton = view.findViewById<CardView>(R.id.diaryButton)
+        val navController = findNavController()
 
         planButton.setOnClickListener {
-            val action = WorkoutFragmentDirections.actionNavigationWorkoutToWorkoutPlansFragment()
-            findNavController().navigate(action)
+            //val action = WorkoutFragmentDirections.actionNavigationWorkoutToWorkoutPlansFragment()
+            //navController.navigate(action)
+            navController.navigate(R.id.workoutPlansFragment)
         }
 
         diaryButton.setOnClickListener {
-            val action = WorkoutFragmentDirections.actionNavigationWorkoutToDiaryFragment()
-            findNavController().navigate(action)
+//            val action = WorkoutFragmentDirections.actionNavigationWorkoutToDiaryFragment()
+//            navController.navigate(action)
+            navController.navigate(R.id.diaryListFragment)
         }
-
-        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

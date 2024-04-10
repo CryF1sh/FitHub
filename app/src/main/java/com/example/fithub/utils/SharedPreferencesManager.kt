@@ -42,4 +42,12 @@ class SharedPreferencesManager(context: Context) {
     fun getAllDiaryEntries(): Map<String, *> {
         return sharedPreferences.all.filterKeys { it.startsWith("diary_entry_") }
     }
+
+    fun saveLatestWorkoutPlanId(planId: Int) {
+        sharedPreferences.edit().putInt("latest_workout_plan_id", planId).apply()
+    }
+
+    fun getLatestWorkoutPlanId(): Int {
+        return sharedPreferences.getInt("latest_workout_plan_id", -1)
+    }
 }

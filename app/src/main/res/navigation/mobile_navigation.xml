@@ -87,6 +87,9 @@
         <action
             android:id="@+id/action_navigation_workoutPlansFragment_to_create"
             app:destination="@id/createWorkoutPlanFragment" />
+        <action
+            android:id="@+id/action_workoutPlansFragment_to_WorkoutPlanEditFragment"
+            app:destination="@id/WorkoutPlanEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/diaryListFragment"
@@ -97,5 +100,16 @@
         android:id="@+id/createWorkoutPlanFragment"
         android:name="com.example.fithub.ui.workout.CreateWorkoutPlanFragment"
         android:label="Создание нового плана"
-        tools:layout="@layout/fragment_create_workout_plan" />
+        tools:layout="@layout/fragment_create_workout_plan" >
+        <action
+            android:id="@+id/action_createWorkoutPlanFragment_to_WorkoutPlanEditFragment"
+            app:destination="@id/WorkoutPlanEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/WorkoutPlanEditFragment"
+        android:name="com.example.fithub.ui.workout.WorkoutPlanEditFragment"
+        android:label="Тренировочный план"
+        tools:layout="@layout/fragment_workout_plan_edit" />
+
 </navigation>
