@@ -23,6 +23,9 @@ class CreateWorkoutPlanFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_workout_plan, container, false)
 
+        val factory = WorkoutViewModelFactory(requireContext())
+        WorkoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
+
         return view
     }
 
@@ -50,6 +53,12 @@ class CreateWorkoutPlanFragment : Fragment() {
             }
 
         }
+    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val factory = WorkoutViewModelFactory(requireContext())
+        WorkoutViewModel = ViewModelProvider(this, factory).get(com.example.fithub.ui.workout.WorkoutViewModel::class.java)
+
     }
 
 }

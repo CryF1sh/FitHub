@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import com.example.fithub.R
 import androidx.navigation.fragment.findNavController
+import com.example.fithub.utils.WorkoutViewModelFactory
 
 class WorkoutFragment : Fragment() {
 
@@ -61,7 +62,8 @@ class WorkoutFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(WorkoutViewModel::class.java)
+        val factory = WorkoutViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
 
     }
 

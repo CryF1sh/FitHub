@@ -5,13 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
 import com.example.fithub.api.ExerciseAdapter
+import com.example.fithub.utils.WorkoutViewModelFactory
 
 class WorkoutPlanEditFragment() : Fragment() {
 
+    private lateinit var WorkoutViewModel: WorkoutViewModel
     private var planId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,5 +50,10 @@ class WorkoutPlanEditFragment() : Fragment() {
             }
         }
     }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val factory = WorkoutViewModelFactory(requireContext())
+        WorkoutViewModel = ViewModelProvider(this, factory).get(com.example.fithub.ui.workout.WorkoutViewModel::class.java)
 
+    }
 }
