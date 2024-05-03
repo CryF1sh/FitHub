@@ -13,7 +13,7 @@ class ExerciseAdapter(private val exerciseList: List<WorkoutPlanExercise>) :
     RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewExerciseName: TextView = itemView.findViewById(R.id.textViewExerciseName)
+        val textExerciseName: EditText = itemView.findViewById(R.id.textExerciseName)
         val editTextSets: EditText = itemView.findViewById(R.id.editTextSets)
         val editTextReps: EditText = itemView.findViewById(R.id.editTextReps)
         val editTextWeightLoad: EditText = itemView.findViewById(R.id.editTextWeightLoad)
@@ -31,7 +31,7 @@ class ExerciseAdapter(private val exerciseList: List<WorkoutPlanExercise>) :
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val currentItem = exerciseList[position]
-        holder.textViewExerciseName.text = currentItem.name
+        holder.textExerciseName.setText(currentItem.name.toString())
         holder.editTextSets.setText(currentItem.sets.toString())
         holder.editTextReps.setText(currentItem.reps.toString())
         holder.editTextWeightLoad.setText(currentItem.weightLoad.toString())

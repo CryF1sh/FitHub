@@ -48,7 +48,7 @@ class WorkoutPlanFragment : Fragment() {
         createButton.setOnClickListener {
 //            val action = WorkoutPlanFragmentDirections.actionNavigationWorkoutPlansFragmentToCreate()
 //            navController.navigate(action)
-            navController.navigate(R.id.createWorkoutPlanFragment)
+            navController.navigate(R.id.WorkoutPlanEditFragment)
         }
     }
 
