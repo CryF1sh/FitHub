@@ -115,11 +115,11 @@ namespace FitHub.Web.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
+        public async Task<IActionResult> ForgotPassword(string email)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(email);
                 if (user != null)
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -132,7 +132,7 @@ namespace FitHub.Web.Controllers
                     try
                     {
                         await _emailSender.SendEmailAsync(
-                            model.Email,
+                            email,
                             "Восстановление пароля",
                             $"Для сброса пароля перейдите по ссылке {callbackUrl}");
 

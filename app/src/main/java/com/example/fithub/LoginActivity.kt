@@ -1,19 +1,21 @@
 package com.example.fithub
 
 import SharedPreferencesManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fithub.api.ServiceGenerator.authService
 import com.example.fithub.models.AuthResponse
+import com.example.fithub.models.LoginRequest
+import com.example.fithub.ui.registration.RegistrationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.content.Intent
-import android.widget.Toast
-import com.example.fithub.models.LoginRequest
-import com.example.fithub.ui.registration.RegistrationActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -41,6 +43,20 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    fun ForgotPassword(view: View?) {
+        val usernameEditText = findViewById<EditText>(R.id.editTextUsername)
+        val email = usernameEditText.text.toString().trim()
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Пожалуйста, введите корректный email адрес", Toast.LENGTH_SHORT).show()
+        } else {
+            val url = "http://vpmt.ru:50805/forgot-password?email=$email"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
+    }
+
 
     private fun loginUser(email: String, password: String, sharedPreferencesManager: SharedPreferencesManager) {
 

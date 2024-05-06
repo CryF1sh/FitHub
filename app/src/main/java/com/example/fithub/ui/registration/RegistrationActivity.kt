@@ -1,7 +1,10 @@
 package com.example.fithub.ui.registration
+
 import SharedPreferencesManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -14,6 +17,7 @@ import com.example.fithub.models.RegistrationModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class RegistrationActivity : AppCompatActivity() {
 
@@ -78,6 +82,13 @@ class RegistrationActivity : AppCompatActivity() {
                 showToast("Ошибка сети: ${t.message}")
             }
         })
+    }
+    fun openPrivacyPage(view: View?) {
+        val url =
+            "http://vpmt.ru:50805/Privacy"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun showToast(message: String) {
