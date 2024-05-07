@@ -10,19 +10,42 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-
-        <EditText
-            android:id="@+id/textExerciseName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Название упражнения"
-            android:textSize="18sp"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp">
+
+            <EditText
+                android:id="@+id/textExerciseName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Название упражнения"
+                android:textSize="18sp"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content"/>
+
+            <ImageButton
+                android:id="@+id/exerciseDeleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_delete_red"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            android:layout_marginTop="-16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
 
             <EditText
                 android:id="@+id/editTextSets"
