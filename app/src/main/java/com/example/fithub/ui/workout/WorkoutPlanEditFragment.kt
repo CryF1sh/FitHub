@@ -10,19 +10,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
+import com.example.fithub.api.ExerciseAdapter
+import com.example.fithub.api.PostAdapter
 import com.example.fithub.utils.WorkoutViewModelFactory
 
 class WorkoutPlanEditFragment() : Fragment() {
 
     private lateinit var workoutViewModel: WorkoutViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_workout_plan_edit, container, false)
-
-        // Инициализация ViewModel
         val factory = WorkoutViewModelFactory(requireContext())
         workoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
 
@@ -31,13 +30,12 @@ class WorkoutPlanEditFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Инициализация RecyclerView и установка LayoutManager
         val recyclerViewExercises = view.findViewById<RecyclerView>(R.id.recyclerViewExercises)
         recyclerViewExercises.layoutManager = LinearLayoutManager(requireContext())
+        val workoutPlan = workoutViewModel.getWorkoutPlan()
 
-        // TODO: Установка адаптера для RecyclerView
-        // recyclerViewExercises.adapter = ваш_адаптер
+        val exerciseAdapter = ExerciseAdapter()
+        recyclerViewExercises.adapter = exerciseAdapter
 
         // Обработка нажатия кнопки "Сохранить изменения"
         val buttonSaveWorkoutPlan = view.findViewById<Button>(R.id.buttonSaveWorkoutPlan)

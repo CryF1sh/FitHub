@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
+using System.Numerics;
 
 namespace FitHub.Web.Data
 {
@@ -221,6 +222,8 @@ namespace FitHub.Web.Data
 
                 entity.Property(e => e.Exerciseinfoid).HasColumnName("exerciseinfoid");
                 entity.Property(e => e.Exerciseid).HasColumnName("exerciseid");
+                entity.Property(e => e.Planid).HasColumnName("planid");
+                entity.Property(e => e.Place).HasColumnName("place");
                 entity.Property(e => e.Leadtime).HasColumnName("leadtime");
                 entity.Property(e => e.Reps).HasColumnName("reps");
                 entity.Property(e => e.Sets).HasColumnName("sets");
@@ -229,6 +232,9 @@ namespace FitHub.Web.Data
                 entity.HasOne(d => d.Exercise).WithMany(p => p.Exerciseinfos)
                     .HasForeignKey(d => d.Exerciseid)
                     .HasConstraintName("exerciseinfo_exerciseid_fkey");
+                entity.HasOne(d => d.Workoutplan).WithMany(p => p.Exerciseinfo)
+                    .HasForeignKey(d => d.Planid)
+                    .HasConstraintName("exerciseinfo_planid_fkey");
             });
 
             modelBuilder.Entity<Image>(entity =>

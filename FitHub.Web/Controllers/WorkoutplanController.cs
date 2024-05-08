@@ -22,14 +22,14 @@ namespace FitHub.Web.Controllers
         }
 
         // GET: api/workoutplan
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Workoutplan>>> GetWorkoutplans()
-        //{
-        //    return await _context.Workoutplans
-        //        .Include(p => p.Creator)
-        //        .OrderByDescending(p => p.Creationdate)
-        //        .ToListAsync();
-        //}
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Workoutplan>>> GetWorkoutplans()
+        {
+            return await _context.Workoutplans
+                .Include(p => p.Creator)
+                .OrderByDescending(p => p.Creationdate)
+                .ToListAsync();
+        }
 
         // GET: api/workoutplan/5
         [HttpGet("{id}")]
@@ -44,6 +44,25 @@ namespace FitHub.Web.Controllers
 
             return workoutplan;
         }
+
+        // GET: api/workoutplan/{id}/exercises
+        [HttpGet("{id}/exercises")]
+        public async Task<ActionResult<IEnumerable<Exerciseinfo>>> GetWorkoutplanExercises(int id)
+        {
+            var workoutplan = await _context.Workoutplans.FindAsync(id);
+            if (workoutplan == null)
+            {
+                return NotFound();
+            }
+
+            var exercises = await _context.Exerciseinfos
+                .Where(e => e.Planid == id)
+                .OrderBy(pl => pl.Place)
+                .ToListAsync();
+
+            return exercises;
+        }
+
 
         // POST: api/workoutplan
         [HttpPost]
@@ -105,6 +124,7 @@ namespace FitHub.Web.Controllers
                     existingExercise.Exerciseinfo.Reps = exerciseModel.Reps;
                     existingExercise.Exerciseinfo.Weightload = exerciseModel.Weightload;
                     existingExercise.Exerciseinfo.Leadtime = exerciseModel.Leadtime;
+                    //Обновить place упраженения
                 }
                 else
                 {

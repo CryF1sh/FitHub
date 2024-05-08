@@ -20,4 +20,5 @@ public partial class Workoutplan
     public virtual ApplicationUser? Creator { get; set; }
 
     public virtual ICollection<Workoutplanexercise> Workoutplanexercises { get; set; } = new List<Workoutplanexercise>();
+    public virtual ICollection<Exerciseinfo> Exerciseinfo { get; set; } = new List<Exerciseinfo>();
 }

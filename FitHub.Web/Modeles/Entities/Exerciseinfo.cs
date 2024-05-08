@@ -8,6 +8,8 @@ public partial class Exerciseinfo
     public int Exerciseinfoid { get; set; }
 
     public int? Exerciseid { get; set; }
+    public int? Planid { get; set; }
+    public int? Place {  get; set; }
 
     public int? Sets { get; set; }
 
@@ -22,4 +24,5 @@ public partial class Exerciseinfo
     public virtual Exercise? Exercise { get; set; }
 
     public virtual ICollection<Workoutplanexercise> Workoutplanexercises { get; set; } = new List<Workoutplanexercise>();
+    public virtual Workoutplan? Workoutplan { get; set; }
 }
