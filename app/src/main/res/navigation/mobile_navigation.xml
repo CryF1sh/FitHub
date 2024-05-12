@@ -86,7 +86,11 @@
         tools:layout="@layout/fragment_workoutplan_list">
         <action
             android:id="@+id/action_workoutPlansFragment_to_WorkoutPlanEditFragment"
-            app:destination="@id/WorkoutPlanEditFragment" />
+            app:destination="@id/WorkoutPlanEditFragment">
+        <argument
+            android:name="planId"
+            app:argType="integer" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/diaryListFragment"
@@ -98,6 +102,10 @@
         android:id="@+id/WorkoutPlanEditFragment"
         android:name="com.example.fithub.ui.workout.WorkoutPlanEditFragment"
         android:label="Тренировочный план"
-        tools:layout="@layout/fragment_workout_plan_edit" />
+        tools:layout="@layout/fragment_workout_plan_edit">
+    <argument
+        android:name="planId"
+        app:argType="integer" />
+    </fragment>
 
 </navigation>

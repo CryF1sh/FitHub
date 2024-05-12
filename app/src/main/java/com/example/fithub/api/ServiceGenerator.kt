@@ -6,7 +6,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceGenerator {
-    private const val BASE_URL = "http://vpmt.ru:50805"
+    //private const val BASE_URL = "http://vpmt.ru:50805"
+    private const val BASE_URL = "http://192.168.43.164:5082/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

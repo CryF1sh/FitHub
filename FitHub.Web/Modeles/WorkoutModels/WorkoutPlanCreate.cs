@@ -1,10 +1,10 @@
-﻿namespace FitHub.Web.Modeles.WorkoutModels
+﻿using FitHub.Data;
+
+namespace FitHub.Web.Modeles.WorkoutModels
 {
     public class WorkoutPlanCreate
     {
         public int Planid { get; set; }
-
-        public DateTime? Creationdate { get; set; }
 
         public string? Name { get; set; }
 
@@ -13,5 +13,7 @@
         public string Creatorid { get; set; }
 
         public bool? Privacy { get; set; }
+
+        public List<ExerciseCreateModel> Exercisesinfo { get; set; } = new List<ExerciseCreateModel>();
     }
 }

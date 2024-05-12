@@ -16,28 +16,25 @@ import com.example.fithub.databinding.FragmentWorkoutplanListBinding
 
 class WorkoutPlanFragment : Fragment() {
 
-//    private lateinit var binding: FragmentWorkoutplanListBinding
-//    private lateinit var sharedPreferences: SharedPreferencesManager
-//    private var workoutPlans: MutableList<WorkoutPlanListItem> = mutableListOf()
-//    private lateinit var adapter: MyWorkoutPlanRecyclerViewAdapter
+    private lateinit var binding: FragmentWorkoutplanListBinding
+    private lateinit var sharedPreferences: SharedPreferencesManager
+    private lateinit var workoutPlanIDs: Map<Int, String>
+    private lateinit var adapter: MyWorkoutPlanRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
           val view = inflater.inflate(R.layout.fragment_workoutplan_list, container, false)
-//        binding = FragmentWorkoutplanListBinding.inflate(inflater, container, false)
-//        sharedPreferences = SharedPreferencesManager(requireContext())
-//
-//        // Загрузка сохраненных планов тренировок из SharedPreferences
-//
-//
-//        // Инициализация RecyclerView и установка адаптера
-//        adapter = MyWorkoutPlanRecyclerViewAdapter(workoutPlans)
-//        binding.list.layoutManager = LinearLayoutManager(requireContext())
-//        binding.list.adapter = adapter
-//
-//        return binding.root
+        binding = FragmentWorkoutplanListBinding.inflate(inflater, container, false)
+        sharedPreferences = SharedPreferencesManager(requireContext())
+
+        workoutPlanIDs = sharedPreferences.getAllWorkoutPlanId()
+
+        adapter = MyWorkoutPlanRecyclerViewAdapter(workoutPlanIDs)
+        binding.list.layoutManager = LinearLayoutManager(requireContext())
+        binding.list.adapter = adapter
+
         return view
     }
 
@@ -46,14 +43,8 @@ class WorkoutPlanFragment : Fragment() {
         val createButton = view.findViewById<Button>(R.id.createPlanButton)
         val navController = findNavController()
         createButton.setOnClickListener {
-//            val action = WorkoutPlanFragmentDirections.actionNavigationWorkoutPlansFragmentToCreate()
-//            navController.navigate(action)
-            navController.navigate(R.id.WorkoutPlanEditFragment)
+            val action = WorkoutPlanFragmentDirections.actionWorkoutPlansFragmentToWorkoutPlanEditFragment(-1)
+            navController.navigate(action)
         }
-    }
-
-    // Метод для добавления нового плана тренировки
-    private fun addWorkoutPlan(name: String, creator: String) {
-
     }
 }

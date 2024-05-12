@@ -21,7 +21,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Название упражнения"
+                android:hint="Название упражнения"
                 android:textSize="18sp"/>
 
             <Space
@@ -54,7 +54,8 @@
                 android:layout_weight="1"
                 android:hint="Подходы"
                 android:textSize="14sp"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:inputType="number"/>
 
             <EditText
                 android:id="@+id/editTextReps"
@@ -64,7 +65,8 @@
                 android:hint="Повторы"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:inputType="number"/>
 
             <EditText
                 android:id="@+id/editTextWeightLoad"
@@ -74,7 +76,8 @@
                 android:hint="Вес"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:inputType="number"/>
 
             <EditText
                 android:id="@+id/editTextLeadTime"
@@ -84,7 +87,8 @@
                 android:hint="Время"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:inputType="number"/>
 
         </LinearLayout>
 

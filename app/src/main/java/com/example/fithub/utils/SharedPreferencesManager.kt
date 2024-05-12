@@ -43,11 +43,27 @@ class SharedPreferencesManager(context: Context) {
         return sharedPreferences.all.filterKeys { it.startsWith("diary_entry_") }
     }
 
-    fun saveLatestWorkoutPlanId(planId: Int) {
-        sharedPreferences.edit().putInt("latest_workout_plan_id", planId).apply()
+    fun saveLatestWorkoutPlanId(planId: Int, planName: String) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("workout_plan_id_$planId", planId)
+        editor.putString("workout_plan_name_$planId", planName)
+        editor.apply()
     }
 
-    fun getLatestWorkoutPlanId(): Int {
-        return sharedPreferences.getInt("latest_workout_plan_id", -1)
+
+    fun getAllWorkoutPlanId(): Map<Int, String> {
+        val workoutPlanIds = mutableMapOf<Int, String>()
+        val allEntries = sharedPreferences.all
+        for ((key, value) in allEntries) {
+            if (key.startsWith("workout_plan_id")) {
+                if (value is String) {
+                    val planNameKey = key.replace("id", "name")
+                    val planName = allEntries[planNameKey] as? String ?: ""
+                    workoutPlanIds[value.toInt()] = planName
+                }
+            }
+        }
+        return workoutPlanIds
     }
+
 }

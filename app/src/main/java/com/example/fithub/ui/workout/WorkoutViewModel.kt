@@ -6,17 +6,19 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import com.example.fithub.api.ServiceGenerator
+import com.example.fithub.models.ExerciseInfo
 import com.example.fithub.models.WorkoutPlanCreate
 import com.example.fithub.models.WorkoutPlanCreateResponse
 import com.example.fithub.models.WorkoutPlanResponse
+import com.example.fithub.models.WorkoutPlanUpdate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class WorkoutViewModel(private val context: Context) : ViewModel() {
 
-    fun createWorkoutPlan(name: String, description: String, isPrivate: Boolean, jwtToken: String?, callback: (Int?) -> Unit) {
-        val newWorkoutPlan = WorkoutPlanCreate(name, description, isPrivate)
+    fun createWorkoutPlan(name: String, description: String, privacy: Boolean, exercisesInfo: List<ExerciseInfo>, jwtToken: String?, callback: (Int?) -> Unit) {
+        val newWorkoutPlan = WorkoutPlanCreate(name, description, privacy, exercisesInfo)
 
         val service = ServiceGenerator.workoutService
 
@@ -33,7 +35,7 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
                     // Сохраняем ID созданного плана в SharedPreferences
                     createdPlanId?.let { planId ->
                         val sharedPreferencesManager = SharedPreferencesManager(context)
-                        sharedPreferencesManager.saveLatestWorkoutPlanId(planId)
+                        sharedPreferencesManager.saveLatestWorkoutPlanId(planId, newWorkoutPlan.name)
                         callback(planId)
                     }
                 } else {
@@ -50,6 +52,34 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
             }
         })
     }
+    fun updateWorkoutPlan(planId: Int, name: String, description: String, privacy: Boolean, exercisesInfo: List<ExerciseInfo>, jwtToken: String?, callback: (Boolean) -> Unit) {
+        val updatedWorkoutPlan = WorkoutPlanUpdate(planId, name, description, privacy, exercisesInfo)
+
+        val service = ServiceGenerator.workoutService
+
+        val headers = HashMap<String, String>()
+        jwtToken?.let { token ->
+            headers["Authorization"] = "Bearer $token"
+        }
+
+        service.updateWorkoutPlan(planId, updatedWorkoutPlan).enqueue(object : Callback<WorkoutPlanCreateResponse> {
+            override fun onResponse(call: Call<WorkoutPlanCreateResponse>, response: Response<WorkoutPlanCreateResponse>) {
+                if (response.isSuccessful) {
+                    // Обновление плана тренировки успешно
+                    callback(true)
+                } else {
+                    Toast.makeText(context, "Ошибка при обновлении плана тренировок", Toast.LENGTH_SHORT).show()
+                    callback(false)
+                }
+            }
+
+            override fun onFailure(call: Call<WorkoutPlanCreateResponse>, t: Throwable) {
+                Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                callback(false)
+            }
+        })
+    }
+
     fun getWorkoutPlan(planId: Int, callback: (WorkoutPlanResponse?) -> Unit) {
         val service = ServiceGenerator.workoutService
 
@@ -71,4 +101,23 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
         })
     }
 
+    fun getExerciseWorkoutPlan(planId: Int, callback: (MutableList<ExerciseInfo>?) -> Unit) {
+        val service = ServiceGenerator.workoutService
+
+        service.getExerciseWorkoutPlan(planId).enqueue(object : Callback<MutableList<ExerciseInfo>> {
+            override fun onResponse(call: Call<MutableList<ExerciseInfo>>, response: Response<MutableList<ExerciseInfo>>) {
+                if (response.isSuccessful) {
+                    val exercises = response.body()
+                    callback(exercises)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<ExerciseInfo>>, t: Throwable) {
+                Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                callback(null)
+            }
+        })
+    }
 }

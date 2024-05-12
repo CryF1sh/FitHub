@@ -6,21 +6,25 @@
 
     <EditText
         android:id="@+id/textEditName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:layout_weight="1"
+        android:hint="Название плана"
         android:textSize="24sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"/>
 
     <EditText
         android:id="@+id/textEditDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Description"
+        android:layout_marginStart="16dp"
+        android:hint="Описание"
+        android:inputType="textMultiLine"
         app:layout_constraintStart_toStartOf="@+id/textEditName"
         app:layout_constraintTop_toBottomOf="@+id/textEditName"
         android:layout_marginEnd="16dp"/>
@@ -31,22 +35,33 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:checked="false"
-        android:text="Приватность"
-        app:layout_constraintStart_toStartOf="@+id/textEditDescription"
+        android:hint="Приватность"
+        app:layout_constraintBottom_toTopOf="@+id/textViewExerciseList"
         app:layout_constraintTop_toBottomOf="@+id/textEditDescription"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/textViewExerciseList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Список упражнений"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/textEditName"
+        app:layout_constraintTop_toBottomOf="@+id/switchPrivacy"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewExercises"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/switchPrivacy"
+        app:layout_constraintTop_toBottomOf="@+id/textViewExerciseList"
         app:layout_constraintBottom_toTopOf="@+id/buttonSaveWorkoutPlan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="16dp"/>
-
     <Button
         android:id="@+id/buttonSaveWorkoutPlan"
         android:layout_width="0dp"

@@ -66,7 +66,7 @@ namespace FitHub.Web.Controllers
 
         // POST: api/workoutplan
         [HttpPost]
-        public async Task<ActionResult<Workoutplan>> CreateWorkoutplan(WorkoutPlanCreate workoutplancreate)
+        public async Task<ActionResult<int>> CreateWorkoutplan(WorkoutPlanCreate workoutplancreate)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -79,6 +79,24 @@ namespace FitHub.Web.Controllers
             };
 
             _context.Workoutplans.Add(workoutplan);
+
+            foreach (var exerciseInfo in workoutplancreate.Exercisesinfo)
+            {
+                var exerciseinfo = new Exerciseinfo
+                {
+                    Exerciseid = exerciseInfo.Exerciseid,
+                    Planid = workoutplan.Planid,
+                    Place = exerciseInfo.Place,
+                    Sets = exerciseInfo.Sets,
+                    Reps = exerciseInfo.Reps,
+                    Weightload = exerciseInfo.Weightload,
+                    Leadtime = exerciseInfo.Leadtime
+                };
+
+                _context.Exerciseinfos.Add(exerciseinfo);
+            }
+
+
             await _context.SaveChangesAsync();
 
             return Ok(workoutplan.Planid);
@@ -176,7 +194,7 @@ namespace FitHub.Web.Controllers
                 }
             }
 
-            return Ok();
+            return Ok(workoutPlan.Planid);
         }
 
         private bool WorkoutPlanExists(int id)
