@@ -8,5 +8,6 @@ data class ExerciseInfo(
     val sets: Int?,
     val reps: Int?,
     val weightLoad: Double?,
-    val leadTime: Long? // Время в миллисекундах
+    val leadTime: Long?, // Время в миллисекундах
+    val name: String?
 )

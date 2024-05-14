@@ -44,10 +44,9 @@ namespace FitHub.Web.Controllers
 
             return workoutplan;
         }
-
         // GET: api/workoutplan/{id}/exercises
         [HttpGet("{id}/exercises")]
-        public async Task<ActionResult<IEnumerable<Exerciseinfo>>> GetWorkoutplanExercises(int id)
+        public async Task<ActionResult<IEnumerable<ExerciseWithNames>>> GetWorkoutplanExercises(int id)
         {
             var workoutplan = await _context.Workoutplans.FindAsync(id);
             if (workoutplan == null)
@@ -60,7 +59,24 @@ namespace FitHub.Web.Controllers
                 .OrderBy(pl => pl.Place)
                 .ToListAsync();
 
-            return exercises;
+            var exercisesWithNames = await _context.Exerciseinfos
+                 .Where(e => e.Planid == id)
+                 .OrderBy(pl => pl.Place)
+                 .Join(_context.Exercises, ei => ei.Exerciseid, e => e.Exerciseid, (ei, e) => new ExerciseWithNames
+                 {
+                     Exerciseinfoid = ei.Exerciseinfoid,
+                     Planid = ei.Planid,
+                     Exerciseid = ei.Exerciseid,
+                     Place = ei.Place,
+                     Sets = ei.Sets, 
+                     Reps = ei.Reps, 
+                     Weightload = ei.Weightload, 
+                     Leadtime = ei.Leadtime, 
+                     name = e.Name
+                 })
+                 .ToListAsync();
+
+            return exercisesWithNames;
         }
 
 

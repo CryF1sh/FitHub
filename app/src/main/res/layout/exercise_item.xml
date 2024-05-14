@@ -16,7 +16,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/textExerciseName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="16dp"
-                android:inputType="number"/>
+                android:inputType="numberDecimal"/>
 
             <EditText
                 android:id="@+id/editTextLeadTime"
@@ -88,7 +88,7 @@
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="16dp"
-                android:inputType="number"/>
+                android:inputType="time"/>
 
         </LinearLayout>
 

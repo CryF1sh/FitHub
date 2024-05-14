@@ -1,13 +1,22 @@
 package com.example.fithub.api
 
+import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
 import com.example.fithub.models.ExerciseInfo
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.Callback
 
 class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -18,7 +27,7 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
     }
 
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textExerciseName: EditText = itemView.findViewById(R.id.textExerciseName)
+        val textExerciseName: AutoCompleteTextView = itemView.findViewById(R.id.textExerciseName)
         val editTextSets: EditText = itemView.findViewById(R.id.editTextSets)
         val editTextReps: EditText = itemView.findViewById(R.id.editTextReps)
         val editTextWeightLoad: EditText = itemView.findViewById(R.id.editTextWeightLoad)
@@ -55,6 +64,25 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
             VIEW_TYPE_EXERCISE -> {
                 val currentItem = exerciseList[position]
                 val exerciseHolder = holder as ExerciseViewHolder
+                exerciseHolder.textExerciseName.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                        // Ничего не делаем перед изменением текста
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        // Вызываем метод для выполнения запроса на получение списка упражнений
+                        fetchExerciseSuggestions(s.toString(), exerciseHolder.textExerciseName.context) { suggestions ->
+                            // Обновляем список предложений в автозаполнении
+                            val adapter = ArrayAdapter(exerciseHolder.textExerciseName.context, android.R.layout.simple_dropdown_item_1line, suggestions)
+                            exerciseHolder.textExerciseName.setAdapter(adapter)
+                        }
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {
+                        // Ничего не делаем после изменения текста
+                    }
+                })
+
                 if (currentItem.exerciseInfoId == null) {
                     // Поля оставляются пустыми
                     exerciseHolder.textExerciseName.text = null
@@ -64,7 +92,7 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
                     exerciseHolder.editTextLeadTime.text = null
                 } else {
                     // Поля заполняются данными
-                    //exerciseHolder.textExerciseName.setText(currentItem.name)
+                    exerciseHolder.textExerciseName.setText(currentItem.name)
                     exerciseHolder.editTextSets.setText(currentItem.sets.toString())
                     exerciseHolder.editTextReps.setText(currentItem.reps.toString())
                     exerciseHolder.editTextWeightLoad.setText(currentItem.weightLoad.toString())
@@ -74,7 +102,7 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
             VIEW_TYPE_BUTTON -> {
                 val buttonHolder = holder as ButtonViewHolder
                 buttonHolder.addButton.setOnClickListener {
-                    exerciseList.add(ExerciseInfo(null,null,null,null,null,null,null,null))
+                    exerciseList.add(ExerciseInfo(null,null,null,null,null,null,null,null, null))
                     notifyItemInserted(exerciseList.size)
                 }
             }
@@ -92,6 +120,25 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
     }
     fun getMutableExerciseList(): MutableList<ExerciseInfo> {
         return exerciseList
+    }
+    fun fetchExerciseSuggestions(query: String, context: Context, callback: (List<String>) -> Unit) {
+        val service = ServiceGenerator.workoutService
+
+        service.searchExercisesByName(query).enqueue(object : Callback<List<String>> {
+            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                if (response.isSuccessful) {
+                    val suggestions = response.body() ?: emptyList()
+                    callback(suggestions)
+                } else {
+                    callback(emptyList())
+                }
+            }
+
+            override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                callback(emptyList())
+            }
+        })
     }
 
 }
