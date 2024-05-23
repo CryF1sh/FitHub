@@ -32,7 +32,78 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
         val editTextReps: EditText = itemView.findViewById(R.id.editTextReps)
         val editTextWeightLoad: EditText = itemView.findViewById(R.id.editTextWeightLoad)
         val editTextLeadTime: EditText = itemView.findViewById(R.id.editTextLeadTime)
+
+        private var isInitializing = false
+
+        fun bind(exerciseInfo: ExerciseInfo) {
+            isInitializing = true
+
+            textExerciseName.setText(exerciseInfo.name)
+            editTextSets.setText(exerciseInfo.sets?.toString())
+            editTextReps.setText(exerciseInfo.reps?.toString())
+            editTextWeightLoad.setText(exerciseInfo.weightLoad?.toString())
+            editTextLeadTime.setText(exerciseInfo.leadTime?.toString())
+
+            isInitializing = false
+        }
+
+        fun addTextWatchers(exerciseInfo: ExerciseInfo) {
+            textExerciseName.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (!isInitializing) {
+                        fetchExerciseSuggestions(s.toString(), textExerciseName.context) { suggestions ->
+                            val adapter = ArrayAdapter(textExerciseName.context, android.R.layout.simple_dropdown_item_1line, suggestions)
+                            textExerciseName.setAdapter(adapter)
+                        }
+                        exerciseInfo.name = s.toString()
+                    }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            editTextSets.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (!isInitializing) {
+                        exerciseInfo.sets = s.toString().toIntOrNull()
+                    }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            editTextReps.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (!isInitializing) {
+                        exerciseInfo.reps = s.toString().toIntOrNull()
+                    }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            editTextWeightLoad.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (!isInitializing) {
+                        exerciseInfo.weightLoad = s.toString().toDoubleOrNull()
+                    }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            editTextLeadTime.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (!isInitializing) {
+                        exerciseInfo.leadTime = s.toString().toLongOrNull()//.toTimeSpan()
+                    }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
     }
+
 
     inner class ButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val addButton: ImageButton = itemView.findViewById(R.id.addExerciseButton)
@@ -64,48 +135,22 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
             VIEW_TYPE_EXERCISE -> {
                 val currentItem = exerciseList[position]
                 val exerciseHolder = holder as ExerciseViewHolder
-                exerciseHolder.textExerciseName.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                        // Ничего не делаем перед изменением текста
-                    }
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        // Вызываем метод для выполнения запроса на получение списка упражнений
-                        fetchExerciseSuggestions(s.toString(), exerciseHolder.textExerciseName.context) { suggestions ->
-                            // Обновляем список предложений в автозаполнении
-                            val adapter = ArrayAdapter(exerciseHolder.textExerciseName.context, android.R.layout.simple_dropdown_item_1line, suggestions)
-                            exerciseHolder.textExerciseName.setAdapter(adapter)
-                        }
-                    }
-
-                    override fun afterTextChanged(s: Editable?) {
-                        // Ничего не делаем после изменения текста
-                    }
-                })
-
-                if (currentItem.exerciseInfoId == null) {
-                    // Поля оставляются пустыми
-                    exerciseHolder.textExerciseName.text = null
-                    exerciseHolder.editTextSets.text = null
-                    exerciseHolder.editTextReps.text = null
-                    exerciseHolder.editTextWeightLoad.text = null
-                    exerciseHolder.editTextLeadTime.text = null
-                } else {
-                    // Поля заполняются данными
-                    exerciseHolder.textExerciseName.setText(currentItem.name)
-                    exerciseHolder.editTextSets.setText(currentItem.sets.toString())
-                    exerciseHolder.editTextReps.setText(currentItem.reps.toString())
-                    exerciseHolder.editTextWeightLoad.setText(currentItem.weightLoad.toString())
-                    exerciseHolder.editTextLeadTime.setText(currentItem.leadTime.toString())
-                }
+                exerciseHolder.addTextWatchers(currentItem)
+                exerciseHolder.bind(currentItem)
             }
             VIEW_TYPE_BUTTON -> {
                 val buttonHolder = holder as ButtonViewHolder
                 buttonHolder.addButton.setOnClickListener {
-                    exerciseList.add(ExerciseInfo(null,null,null,null,null,null,null,null, null))
+                    exerciseList.add(ExerciseInfo(null, null, null, null, null, null, null, null, null))
                     notifyItemInserted(exerciseList.size)
                 }
             }
+        }
+    }
+
+    fun Long?.toTimeSpan(): Long? {
+        return this?.let {
+            it * 60 * 1000 // Преобразование минут в миллисекунды
         }
     }
 
@@ -135,7 +180,7 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
             }
 
             override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Ошибка сети: поиск упражнений", Toast.LENGTH_SHORT).show()
                 callback(emptyList())
             }
         })

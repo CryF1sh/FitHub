@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Пожалуйста, введите корректный email адрес", Toast.LENGTH_SHORT).show()
         } else {
-            val url = "http://vpmt.ru:50805/forgot-password?email=$email"
+            val url = "http://192.168.43.164:5082/forgot-password?email=$email"
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
             startActivity(intent)

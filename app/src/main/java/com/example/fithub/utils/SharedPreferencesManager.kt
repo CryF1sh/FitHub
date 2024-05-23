@@ -53,14 +53,13 @@ class SharedPreferencesManager(context: Context) {
 
     fun getAllWorkoutPlanId(): Map<Int, String> {
         val workoutPlanIds = mutableMapOf<Int, String>()
-        val allEntries = sharedPreferences.all
-        for ((key, value) in allEntries) {
-            if (key.startsWith("workout_plan_id")) {
-                if (value is String) {
-                    val planNameKey = key.replace("id", "name")
-                    val planName = allEntries[planNameKey] as? String ?: ""
-                    workoutPlanIds[value.toInt()] = planName
-                }
+        val planIdKeys = sharedPreferences.all.keys.filter { it.startsWith("workout_plan_id_") }
+        for (planIdKey in planIdKeys) {
+            val planId = sharedPreferences.getInt(planIdKey, -1)
+            val planNameKey = planIdKey.replace("id", "name")
+            val planName = sharedPreferences.getString(planNameKey, "") ?: ""
+            if (planId != -1) {
+                workoutPlanIds[planId] = planName
             }
         }
         return workoutPlanIds

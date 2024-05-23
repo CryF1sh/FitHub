@@ -16,10 +16,10 @@ import retrofit2.http.Query
 
 interface WorkoutService {
     @POST("api/workoutplan")
-    fun createWorkoutPlan(@Body plan: WorkoutPlanCreate, @HeaderMap headers: Map<String, String>): Call<WorkoutPlanCreateResponse>
+    fun createWorkoutPlan(@Body plan: WorkoutPlanCreate, @HeaderMap headers: Map<String, String>): Call<Int>
     @GET("api/workoutplan/{id}")
     fun getWorkoutPlan(@Path("id") planId: Int): Call<WorkoutPlanResponse>
-    @GET("api/workoutplan/{id}/exercise")
+    @GET("/api/Workoutplan/{id}/exercises")
     fun getExerciseWorkoutPlan(@Path("id") planId: Int): Call<MutableList<ExerciseInfo>>
     @PUT("api/workoutplan/{id}")
     fun updateWorkoutPlan(@Path("id") planId: Int, @Body plan: WorkoutPlanUpdate): Call<WorkoutPlanCreateResponse>

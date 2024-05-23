@@ -61,7 +61,13 @@
         android:textColor="@color/blue"
         android:clickable="true"
         android:onClick="openPrivacyPage"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="2dp"/>
+    <TextView
+        android:id="@+id/textSogl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="и даёте согласие на обработку персональных данных"
+        android:layout_marginTop="2dp"/>
 
     <Button
         android:id="@+id/registerButton"
@@ -69,6 +75,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="64dp"
-        android:text="Зарегестрироваться"
+        android:text="Зарегистрироваться"
         android:layout_marginTop="24dp" />
 </LinearLayout>

@@ -12,6 +12,7 @@
 
         public double? Weightload { get; set; }
 
-        public TimeSpan? Leadtime { get; set; }
+        public long? Leadtime { get; set; }
+        public string? name { get; set; }
     }
 }

@@ -68,12 +68,45 @@
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- Блок с информацией по текущей тренировке -->
-    <FrameLayout
+    <androidx.cardview.widget.CardView
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        app:cardCornerRadius="24dp"
         android:layout_marginTop="16dp"
-        android:background="#EEEEEE">
-    </FrameLayout>
+        app:cardBackgroundColor="#EEEEEE"
+        android:background="@color/black">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Информация о вашей текущей тренировке: временно недоступна"
+            android:layout_margin="8dp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/fitness_apps"
+            android:scaleType="fitCenter" />
+        <!-- Блок с информацией по текущей тренировке -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:background="#EEEEEE">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Информация о вашей текущей тренировке: временно недоступно"
+                android:layout_margin="4dp"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/fitness_apps"
+                android:scaleType="fitCenter" />
+
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

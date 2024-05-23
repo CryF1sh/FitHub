@@ -14,9 +14,9 @@ namespace FitHub.Web.Modeles.WorkoutModels
 
         public int? Reps { get; set; }
 
-        public double? Weightload { get; set; }
+        public double? weightload { get; set; }
 
-        public TimeSpan? Leadtime { get; set; }
+        public TimeSpan? leadtime { get; set; }
         public string name { get; set; }
     }
 }

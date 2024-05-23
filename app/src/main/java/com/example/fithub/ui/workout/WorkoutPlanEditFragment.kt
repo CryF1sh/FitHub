@@ -1,6 +1,8 @@
 package com.example.fithub.ui.workout
 
+import SharedPreferencesManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fithub.R
@@ -52,15 +55,17 @@ class WorkoutPlanEditFragment() : Fragment() {
                     // Загрузить список упражений плана тренировок и обновите данные в адаптере и установить
 
                     workoutViewModel.getExerciseWorkoutPlan(planId) {exerciseInfo ->
-                        if (exerciseInfo != null){
+                        if (exerciseInfo != null) {
                             // Получен список упражнений
                             val exerciseAdapter = ExerciseAdapter(exerciseInfo)
                             recyclerViewExercises.adapter = exerciseAdapter
+                            exerciseAdapter.notifyDataSetChanged()
                         }
                         else {
                             // Упражнения не найдены
                             val exerciseAdapter = ExerciseAdapter(arrayListOf())
                             recyclerViewExercises.adapter = exerciseAdapter
+                            exerciseAdapter.notifyDataSetChanged()
                         }
                     }
                 } else {
@@ -72,6 +77,7 @@ class WorkoutPlanEditFragment() : Fragment() {
             // Плана тренировок не существует или создан новый план тренировок
             val exerciseAdapter = ExerciseAdapter(arrayListOf())
             recyclerViewExercises.adapter = exerciseAdapter
+            exerciseAdapter.notifyDataSetChanged()
         }
 
         val buttonSaveWorkoutPlan = view.findViewById<Button>(R.id.buttonSaveWorkoutPlan)
@@ -84,22 +90,28 @@ class WorkoutPlanEditFragment() : Fragment() {
             val exerciseAdapter = recyclerViewExercises.adapter as? ExerciseAdapter
             val exercisesInfo = exerciseAdapter?.getMutableExerciseList() ?: arrayListOf()
 
+            val sharedPreferencesManager = SharedPreferencesManager(requireContext())
+            val jwtToken = sharedPreferencesManager.getAuthToken()
             if(planId == -1) {
                 // Создание нового плана тренировки
-                workoutViewModel.createWorkoutPlan(name, description, privacy, exercisesInfo, null) { createdPlanId ->
+                workoutViewModel.createWorkoutPlan(name, description, privacy, exercisesInfo, jwtToken) { createdPlanId ->
                     if (createdPlanId != null) {
                         // Успешно создан новый план тренировки
+                        Log.d("WorkoutViewModel", "План тренировки успешно создан. ID: $createdPlanId")
+                        findNavController().navigateUp()
                     } else {
                         // Не удалось создать план тренировки
+                        Log.d("WorkoutViewModel", "Не удалось создать план тренировки")
                         Toast.makeText(context, "Не удалось создать план тренировки", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             else {
                 // Обновить план тренировки
-                workoutViewModel.updateWorkoutPlan(planId, name, description, privacy, exercisesInfo, null) { success ->
+                workoutViewModel.updateWorkoutPlan(planId, name, description, privacy, exercisesInfo, jwtToken) { success ->
                     if (success) {
                         // Успешно обновлен план тренировки
+                        findNavController().navigateUp()
                     } else {
                         // Не удалось обновить план тренировки
                         Toast.makeText(context, "Не удалось обновить план тренировки", Toast.LENGTH_SHORT).show()

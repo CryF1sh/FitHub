@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FitHub.Data;
 
@@ -19,6 +20,9 @@ public partial class Workoutplan
 
     public virtual ApplicationUser? Creator { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Workoutplanexercise> Workoutplanexercises { get; set; } = new List<Workoutplanexercise>();
+
+    [JsonIgnore]
     public virtual ICollection<Exerciseinfo> Exerciseinfo { get; set; } = new List<Exerciseinfo>();
 }

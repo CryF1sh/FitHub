@@ -2,6 +2,7 @@
 using FitHub.Web.Data;
 using FitHub.Web.Modeles;
 using FitHub.Web.Modeles.WorkoutModels;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,14 +55,9 @@ namespace FitHub.Web.Controllers
                 return NotFound();
             }
 
-            var exercises = await _context.Exerciseinfos
-                .Where(e => e.Planid == id)
-                .OrderBy(pl => pl.Place)
-                .ToListAsync();
-
             var exercisesWithNames = await _context.Exerciseinfos
                  .Where(e => e.Planid == id)
-                 .OrderBy(pl => pl.Place)
+                 .OrderBy(pl => pl.Exerciseinfoid) //Заменить на place
                  .Join(_context.Exercises, ei => ei.Exerciseid, e => e.Exerciseid, (ei, e) => new ExerciseWithNames
                  {
                      Exerciseinfoid = ei.Exerciseinfoid,
@@ -70,8 +66,8 @@ namespace FitHub.Web.Controllers
                      Place = ei.Place,
                      Sets = ei.Sets, 
                      Reps = ei.Reps, 
-                     Weightload = ei.Weightload, 
-                     Leadtime = ei.Leadtime, 
+                     weightload = ei.Weightload, 
+                     leadtime = ei.Leadtime, 
                      name = e.Name
                  })
                  .ToListAsync();
@@ -82,34 +78,46 @@ namespace FitHub.Web.Controllers
 
         // POST: api/workoutplan
         [HttpPost]
-        public async Task<ActionResult<int>> CreateWorkoutplan(WorkoutPlanCreate workoutplancreate)
+        public async Task<ActionResult<int>> CreateWorkoutplan([FromBody] WorkoutPlanCreate workoutplancreate)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var workoutplan = new Workoutplan
             {
                 Name = workoutplancreate.Name,
+                Creationdate = DateTime.Now,
                 Description = workoutplancreate.Description,
                 Creatorid = userId, 
                 Privacy = workoutplancreate.Privacy
             };
 
             _context.Workoutplans.Add(workoutplan);
+            await _context.SaveChangesAsync();
 
             foreach (var exerciseInfo in workoutplancreate.Exercisesinfo)
             {
-                var exerciseinfo = new Exerciseinfo
+                //Найти каждое ID упражения по названию, если его нет - добавить новое упраждение в БД
+                var exercise = await _context.Exercises.FirstOrDefaultAsync(e => e.Name == exerciseInfo.name);
+
+                if (exercise == null)
                 {
-                    Exerciseid = exerciseInfo.Exerciseid,
+                    exercise = new Exercise { Name = exerciseInfo.name };
+                    _context.Exercises.Add(exercise);
+                    await _context.SaveChangesAsync();
+                }
+
+                var saveexerciseinfo = new Exerciseinfo
+                {
+                    Exerciseid = exercise.Exerciseid,
                     Planid = workoutplan.Planid,
                     Place = exerciseInfo.Place,
                     Sets = exerciseInfo.Sets,
                     Reps = exerciseInfo.Reps,
                     Weightload = exerciseInfo.Weightload,
-                    Leadtime = exerciseInfo.Leadtime
+                    Leadtime = exerciseInfo.Leadtime.HasValue ? TimeSpan.FromTicks(exerciseInfo.Leadtime.Value) : TimeSpan.Zero
                 };
 
-                _context.Exerciseinfos.Add(exerciseinfo);
+                _context.Exerciseinfos.Add(saveexerciseinfo);
             }
 
 

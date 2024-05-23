@@ -27,25 +27,22 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
             headers["Authorization"] = "Bearer $token"
         }
 
-        service.createWorkoutPlan(newWorkoutPlan, headers).enqueue(object : Callback<WorkoutPlanCreateResponse> {
-            override fun onResponse(call: Call<WorkoutPlanCreateResponse>, response: Response<WorkoutPlanCreateResponse>) {
+        service.createWorkoutPlan(newWorkoutPlan, headers).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 if (response.isSuccessful) {
-                    val createdPlanId = response.body()?.id
-
-                    // Сохраняем ID созданного плана в SharedPreferences
+                    val createdPlanId = response.body()
                     createdPlanId?.let { planId ->
                         val sharedPreferencesManager = SharedPreferencesManager(context)
                         sharedPreferencesManager.saveLatestWorkoutPlanId(planId, newWorkoutPlan.name)
                         callback(planId)
                     }
                 } else {
-                    // Обработка ошибки при создании плана тренировок
                     Toast.makeText(context, "Ошибка при создании плана тренировок", Toast.LENGTH_SHORT).show()
                     callback(null)
                 }
             }
 
-            override fun onFailure(call: Call<WorkoutPlanCreateResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Int>, t: Throwable) {
                 // Обработка ошибки при сетевом запросе
                 Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
                 callback(null)
@@ -115,7 +112,7 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
             }
 
             override fun onFailure(call: Call<MutableList<ExerciseInfo>>, t: Throwable) {
-                Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Ошибка сети: загрузка списка упражнений", Toast.LENGTH_SHORT).show()
                 callback(null)
             }
         })

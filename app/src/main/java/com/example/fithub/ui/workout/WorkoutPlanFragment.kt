@@ -35,7 +35,7 @@ class WorkoutPlanFragment : Fragment() {
         binding.list.layoutManager = LinearLayoutManager(requireContext())
         binding.list.adapter = adapter
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,4 +47,13 @@ class WorkoutPlanFragment : Fragment() {
             navController.navigate(action)
         }
     }
+    override fun onResume() {
+        super.onResume()
+
+        // Обновить список планов тренировок
+        workoutPlanIDs = sharedPreferences.getAllWorkoutPlanId()
+        adapter = MyWorkoutPlanRecyclerViewAdapter(workoutPlanIDs)
+        binding.list.adapter = adapter
+    }
+
 }
