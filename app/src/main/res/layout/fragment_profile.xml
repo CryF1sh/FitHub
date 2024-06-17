@@ -16,13 +16,13 @@
         android:contentDescription="Profile Picture" />
 
     <TextView
-        android:id="@+id/full_name"
+        android:id="@+id/fullname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/profile_image"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Богомолов Глеб"
+        android:text="Имя Фамилия"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
         android:id="@+id/city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/full_name"
+        android:layout_below="@id/fullname"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
         android:text="Город"
@@ -55,7 +55,7 @@
         android:layout_marginTop="4dp"
         android:text="Дата рождения: "
         android:textSize="14sp" />
-    
+
     <TextView
         android:id="@+id/date_of_registration"
         android:layout_width="wrap_content"
@@ -90,5 +90,3 @@
         android:layout_centerHorizontal="true"
         android:text="Выход" />
 </RelativeLayout>
-
-

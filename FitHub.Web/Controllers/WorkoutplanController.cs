@@ -155,50 +155,62 @@ namespace FitHub.Web.Controllers
             workoutPlan.Description = model.Description;
             workoutPlan.Privacy = model.Privacy;
 
-            foreach (var exerciseModel in model.Workoutplanexercises)
-            {
-                var existingExercise = workoutPlan.Workoutplanexercises
-                    .FirstOrDefault(wpe => wpe.Exerciseinfoid == exerciseModel.Exerciseinfoid);
 
-                if (existingExercise != null)
+            var existingExercises = await _context.Exerciseinfos
+                .Where(e => e.Planid == id)
+                .ToListAsync();
+
+            // Обновляем или добавляем упражнения
+            foreach (var exerciseModel in model.exercisesInfo)
+            {
+                var exercise = await _context.Exercises
+                    .FirstOrDefaultAsync(e => e.Name == exerciseModel.Name);
+
+                if (exercise == null)
                 {
-                    existingExercise.Exerciseinfo.Sets = exerciseModel.Sets;
-                    existingExercise.Exerciseinfo.Reps = exerciseModel.Reps;
-                    existingExercise.Exerciseinfo.Weightload = exerciseModel.Weightload;
-                    existingExercise.Exerciseinfo.Leadtime = exerciseModel.Leadtime;
-                    //Обновить place упраженения
+                    exercise = new Exercise { Name = exerciseModel.Name };
+                    _context.Exercises.Add(exercise);
+                    await _context.SaveChangesAsync();
+                }
+
+                var existingExerciseInfo = existingExercises
+                    .FirstOrDefault(e => e.Exerciseid == exercise.Exerciseid);
+
+                if (existingExerciseInfo != null)
+                {
+                    // Обновляем существующее упражнение
+                    existingExerciseInfo.Sets = exerciseModel.Sets;
+                    existingExerciseInfo.Reps = exerciseModel.Reps;
+                    existingExerciseInfo.Weightload = exerciseModel.Weightload;
+                    existingExerciseInfo.Leadtime = exerciseModel.Leadtime.HasValue ? TimeSpan.FromTicks(exerciseModel.Leadtime.Value) : TimeSpan.Zero;
                 }
                 else
                 {
+                    // Добавляем новое упражнение
                     var newExerciseInfo = new Exerciseinfo
                     {
-                        Exerciseinfoid = exerciseModel.Exerciseinfoid,
+                        Exerciseid = exercise.Exerciseid,
+                        Planid = id,
                         Sets = exerciseModel.Sets,
                         Reps = exerciseModel.Reps,
                         Weightload = exerciseModel.Weightload,
-                        Leadtime = exerciseModel.Leadtime
+                        Leadtime = exerciseModel.Leadtime.HasValue ? TimeSpan.FromTicks(exerciseModel.Leadtime.Value) : TimeSpan.Zero
                     };
 
-                    var newWorkoutPlanExercise = new Workoutplanexercise
-                    {
-                        Planid = workoutPlan.Planid,
-                        Exerciseinfoid = exerciseModel.Exerciseinfoid,
-                        Exerciseinfo = newExerciseInfo
-                    };
-
-                    workoutPlan.Workoutplanexercises.Add(newWorkoutPlanExercise);
+                    _context.Exerciseinfos.Add(newExerciseInfo);
                 }
-
             }
 
-            var exercisesToRemove = workoutPlan.Workoutplanexercises
-                .Where(wpe => !model.Workoutplanexercises.Any(em => em.Exerciseinfoid == wpe.Exerciseinfo.Exerciseinfoid))
+            // Удаляем упражнения, которых больше нет в обновленном плане
+            var newExerciseIds = model.exercisesInfo
+                .Select(e => _context.Exercises.FirstOrDefault(ex => ex.Name == e.Name).Exerciseid)
                 .ToList();
 
-            foreach (var exerciseToRemove in exercisesToRemove)
-            {
-                _context.Workoutplanexercises.Remove(exerciseToRemove);
-            }
+            var exercisesToRemove = existingExercises
+                .Where(e => !newExerciseIds.Contains(e.Exerciseid.Value))
+                .ToList();
+
+            _context.Exerciseinfos.RemoveRange(exercisesToRemove);
 
             _context.Entry(workoutPlan).State = EntityState.Modified;
 
@@ -218,7 +230,7 @@ namespace FitHub.Web.Controllers
                 }
             }
 
-            return Ok(workoutPlan.Planid);
+            return Ok(id);
         }
 
         private bool WorkoutPlanExists(int id)

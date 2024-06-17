@@ -32,6 +32,7 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
         val editTextReps: EditText = itemView.findViewById(R.id.editTextReps)
         val editTextWeightLoad: EditText = itemView.findViewById(R.id.editTextWeightLoad)
         val editTextLeadTime: EditText = itemView.findViewById(R.id.editTextLeadTime)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.exerciseDeleteButton)
 
         private var isInitializing = false
 
@@ -45,6 +46,15 @@ class ExerciseAdapter(val exerciseList: MutableList<ExerciseInfo>) :
             editTextLeadTime.setText(exerciseInfo.leadTime?.toString())
 
             isInitializing = false
+
+            deleteButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    exerciseList.removeAt(position)
+                    notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, exerciseList.size)
+                }
+            }
         }
 
         fun addTextWatchers(exerciseInfo: ExerciseInfo) {

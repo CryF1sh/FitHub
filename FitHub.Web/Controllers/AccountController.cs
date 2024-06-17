@@ -4,6 +4,7 @@ using FitHub.Web.Modeles.Identity;
 using FitHub.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FitHub.Web.Controllers
 {
@@ -200,6 +201,74 @@ namespace FitHub.Web.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден.");
+            }
+            
+            var profile = new
+            {
+                user.Firstname,
+                user.Lastname,
+                user.Bio,
+                user.Location,
+                user.Birthdate,
+                user.Registrationdate
+            };
+
+            return Ok(profile);
+        }
+
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден.");
+            }
+
+            user.Firstname = model.Firstname;
+            user.Lastname = model.Lastname;
+            user.Bio = model.Bio;
+            user.Location = model.Location;
+            user.Birthdate = model.Birthdate;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(true);
+            }
+
+            return BadRequest("Ошибка при обновлении информации о пользователе.");
         }
 
     }

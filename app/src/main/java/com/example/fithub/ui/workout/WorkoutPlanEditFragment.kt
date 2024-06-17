@@ -98,6 +98,7 @@ class WorkoutPlanEditFragment() : Fragment() {
                     if (createdPlanId != null) {
                         // Успешно создан новый план тренировки
                         Log.d("WorkoutViewModel", "План тренировки успешно создан. ID: $createdPlanId")
+                        Toast.makeText(context, "Новый тренировочный план успешно создан", Toast.LENGTH_SHORT).show()
                         findNavController().navigateUp()
                     } else {
                         // Не удалось создать план тренировки
@@ -112,6 +113,7 @@ class WorkoutPlanEditFragment() : Fragment() {
                     if (success) {
                         // Успешно обновлен план тренировки
                         findNavController().navigateUp()
+                        Toast.makeText(context, "Тренировочный план был успешно обновлён", Toast.LENGTH_SHORT).show()
                     } else {
                         // Не удалось обновить план тренировки
                         Toast.makeText(context, "Не удалось обновить план тренировки", Toast.LENGTH_SHORT).show()

@@ -78,7 +78,17 @@
         android:id="@+id/navigation_profile"
         android:name="com.example.fithub.ui.profile.ProfileFragment"
         android:label="Личный профиль"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+    <action
+        android:id="@+id/action_navigation_profile_to_profileEditUserInfoFragment"
+        app:destination="@id/profileEditUserInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileEditUserInfoFragment"
+        android:name="com.example.fithub.ui.profile.ProfileEditUserInfoFragment"
+        android:label="Редактирование профиля"
+        tools:layout="@layout/fragment_profile_edit_user_info" />
     <fragment
         android:id="@+id/workoutPlansFragment"
         android:name="com.example.fithub.ui.workout.WorkoutPlanFragment"

@@ -22,7 +22,7 @@ interface WorkoutService {
     @GET("/api/Workoutplan/{id}/exercises")
     fun getExerciseWorkoutPlan(@Path("id") planId: Int): Call<MutableList<ExerciseInfo>>
     @PUT("api/workoutplan/{id}")
-    fun updateWorkoutPlan(@Path("id") planId: Int, @Body plan: WorkoutPlanUpdate): Call<WorkoutPlanCreateResponse>
+    fun updateWorkoutPlan(@Path("id") planId: Int, @Body plan: WorkoutPlanUpdate, @HeaderMap headers: Map<String, String>): Call<Int>
     @GET("api/search/exercises")
     fun searchExercisesByName(@Query("name") name: String): Call<List<String>>
 

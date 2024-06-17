@@ -1,0 +1,77 @@
+<!-- Обновленная разметка fragment_profile_edit_user_info.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/label_full_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Имя и фамилия"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/edit_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_full_name"
+        android:hint="Введите ваше имя"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/edit_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_first_name"
+        android:hint="Введите вашу фамилию"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/label_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Город"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_below="@id/edit_last_name"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/edit_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_city"
+        android:hint="Введите ваш город"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/label_about_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="О себе"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_below="@id/edit_city"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/edit_about_me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_about_me"
+        android:hint="Напишите о себе"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/save_changes_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сохранить изменения"
+        android:layout_below="@id/edit_about_me"
+        android:layout_marginTop="24dp"/>
+
+</RelativeLayout>

@@ -50,7 +50,7 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
         })
     }
     fun updateWorkoutPlan(planId: Int, name: String, description: String, privacy: Boolean, exercisesInfo: List<ExerciseInfo>, jwtToken: String?, callback: (Boolean) -> Unit) {
-        val updatedWorkoutPlan = WorkoutPlanUpdate(planId, name, description, privacy, exercisesInfo)
+        val updatedWorkoutPlan = WorkoutPlanUpdate(name, description, privacy, exercisesInfo)
 
         val service = ServiceGenerator.workoutService
 
@@ -59,8 +59,8 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
             headers["Authorization"] = "Bearer $token"
         }
 
-        service.updateWorkoutPlan(planId, updatedWorkoutPlan).enqueue(object : Callback<WorkoutPlanCreateResponse> {
-            override fun onResponse(call: Call<WorkoutPlanCreateResponse>, response: Response<WorkoutPlanCreateResponse>) {
+        service.updateWorkoutPlan(planId, updatedWorkoutPlan, headers).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 if (response.isSuccessful) {
                     // Обновление плана тренировки успешно
                     callback(true)
@@ -70,7 +70,7 @@ class WorkoutViewModel(private val context: Context) : ViewModel() {
                 }
             }
 
-            override fun onFailure(call: Call<WorkoutPlanCreateResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Int>, t: Throwable) {
                 Toast.makeText(context, "Ошибка сети", Toast.LENGTH_SHORT).show()
                 callback(false)
             }
